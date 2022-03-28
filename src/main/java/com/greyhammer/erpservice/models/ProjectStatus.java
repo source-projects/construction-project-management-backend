@@ -1,0 +1,5 @@
+package com.greyhammer.erpservice.models;
+
+public enum ProjectStatus {
+    DESIGN, DEFINE_SCOPE, COST_ESTIMATE, ACCOUNTING_APPROVAL, STATEKHOLDER_APPROVAL, CLIENT_APPROVAL, STARTED, COMPLETED, CANCELLED
+}
