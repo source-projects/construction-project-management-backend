@@ -1,8 +1,11 @@
 package com.greyhammer.erpservice.controllers;
 
+import com.greyhammer.erpservice.models.Project;
 import com.greyhammer.erpservice.services.ProjectService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Set;
 
 @RestController
 public class ProjectController {
@@ -13,7 +16,7 @@ public class ProjectController {
     }
 
     @RequestMapping("/")
-    public String get() {
-        return service.getProject();
+    public Set<Project> getAll() {
+        return service.getAllProjects();
     }
 }
