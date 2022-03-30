@@ -1,7 +1,11 @@
 package com.greyhammer.erpservice.models;
 
+import lombok.*;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 public class AttachmentObject {
     @Id
@@ -14,27 +18,4 @@ public class AttachmentObject {
     @OneToOne
     private Attachment attachment;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Attachment getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(Attachment attachment) {
-        this.attachment = attachment;
-    }
-
-    public Byte[] getData() {
-        return data;
-    }
-
-    public void setData(Byte[] data) {
-        this.data = data;
-    }
 }

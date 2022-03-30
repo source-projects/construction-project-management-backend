@@ -1,8 +1,12 @@
 package com.greyhammer.erpservice.models;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.util.Date;
 
+@Getter
+@Setter
 @Entity
 public class Log {
 
@@ -16,35 +20,4 @@ public class Log {
     @ManyToOne
     private Project project;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public void setProject(Project project) {
-        this.project = project;
-    }
 }
