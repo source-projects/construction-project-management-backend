@@ -5,6 +5,7 @@ import com.greyhammer.erpservice.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -20,5 +21,10 @@ public class ProjectServiceImp implements ProjectService {
         Set<Project> projects = new HashSet<Project>();
         projectRepository.findAll().iterator().forEachRemaining(projects::add);
         return projects;
+    }
+
+    @Override
+    public Optional<Project> getProjectById(Long id) {
+        return projectRepository.findById(id);
     }
 }
