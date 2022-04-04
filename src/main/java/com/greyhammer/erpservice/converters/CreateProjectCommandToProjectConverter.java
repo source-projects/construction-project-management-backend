@@ -16,7 +16,6 @@ public class CreateProjectCommandToProjectConverter implements Converter<CreateP
         final Project project = new Project();
         project.setName(source.getName());
         project.setDescription(source.getDescription());
-        project.setCustomer(source.getCustomer());
         project.setHasExistingDesign(source.getHasExistingDesign());
         return project;
     }
