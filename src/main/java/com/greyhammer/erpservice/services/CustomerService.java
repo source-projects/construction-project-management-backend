@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface CustomerService {
     Customer getOrCreate(Customer customer) throws CustomerNotFoundException;
     Customer save(Customer customer);
-    Optional<Customer> getById(Long id);
+    Customer getById(Long id) throws CustomerNotFoundException;
 }

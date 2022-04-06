@@ -3,6 +3,7 @@ package com.greyhammer.erpservice.services;
 import com.greyhammer.erpservice.commands.CreateProjectCommand;
 import com.greyhammer.erpservice.converters.CreateProjectCommandToProjectConverter;
 import com.greyhammer.erpservice.exceptions.CustomerNotFoundException;
+import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.models.Customer;
 import com.greyhammer.erpservice.models.Project;
 import com.greyhammer.erpservice.repositories.ProjectRepository;
@@ -37,8 +38,13 @@ public class ProjectServiceImp implements ProjectService {
     }
 
     @Override
-    public Optional<Project> getProjectById(Long id) {
-        return projectRepository.findById(id);
+    public Project getProjectById(Long id) throws ProjectNotFoundException {
+        Optional<Project> project = projectRepository.findById(id);
+
+        if (project.isEmpty())
+            throw new ProjectNotFoundException();
+
+        return project.get();
     }
 
     @Override

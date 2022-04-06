@@ -1,6 +1,7 @@
 package com.greyhammer.erpservice.services;
 
 import com.greyhammer.erpservice.converters.CreateProjectCommandToProjectConverter;
+import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.models.Customer;
 import com.greyhammer.erpservice.models.Project;
 import com.greyhammer.erpservice.repositories.ProjectRepository;
@@ -59,7 +60,7 @@ class ProjectServiceImpTest {
 
         when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
 
-        assertEquals(projectService.getProjectById(1L).isPresent(), true);
-        assertEquals(projectService.getProjectById(2L).isPresent(), false);
+        assertDoesNotThrow(() -> projectService.getProjectById(1L));
+        assertThrows(ProjectNotFoundException.class, () -> projectService.getProjectById(2L));
     }
 }

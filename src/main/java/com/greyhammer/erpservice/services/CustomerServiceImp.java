@@ -22,13 +22,7 @@ public class CustomerServiceImp implements CustomerService {
         if (customerId == null) {
             return save(customer);
         } else {
-            Optional<Customer> existing = getById(customerId);
-
-            if (existing.isEmpty())
-                throw new CustomerNotFoundException();
-            else {
-                return existing.get();
-            }
+            return getById(customerId);
         }
     }
 
@@ -38,7 +32,12 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
-    public Optional<Customer> getById(Long id) {
-        return customerRepository.findById(id);
+    public Customer getById(Long id) throws CustomerNotFoundException {
+        Optional<Customer> customer = customerRepository.findById(id);
+
+        if (customer.isEmpty())
+            throw new CustomerNotFoundException();
+
+        return customer.get();
     }
 }

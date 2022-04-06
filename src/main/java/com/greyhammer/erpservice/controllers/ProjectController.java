@@ -3,6 +3,7 @@ package com.greyhammer.erpservice.controllers;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.greyhammer.erpservice.commands.CreateProjectCommand;
 import com.greyhammer.erpservice.exceptions.CustomerNotFoundException;
+import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.models.Project;
 import com.greyhammer.erpservice.services.ProjectService;
 import com.greyhammer.erpservice.views.ProjectView;
@@ -46,12 +47,17 @@ public class ProjectController {
 
     @RequestMapping("/projects/{id}")
     @JsonView(ProjectView.FullView.class)
-    public ResponseEntity<Project> get(@PathVariable Long id) {
-        Optional<Project> project = projectService.getProjectById(id);
-        if (project.isPresent())
-            return ResponseEntity.ok(project.get());
-        else {
+    public ResponseEntity<Object> get(@PathVariable Long id) {
+        try {
+            Project project = projectService.getProjectById(id);
+            return ResponseEntity.ok(project);
+        } catch (ProjectNotFoundException ex) {
             return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<String, String>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
         }
     }
 

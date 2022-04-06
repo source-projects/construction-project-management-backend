@@ -1,4 +1,4 @@
 package com.greyhammer.erpservice.exceptions;
 
-public class AttachmentNotFoundException {
+public class AttachmentNotFoundException extends Exception {
 }

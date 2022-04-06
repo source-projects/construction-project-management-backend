@@ -4,13 +4,12 @@ import com.greyhammer.erpservice.models.AttachmentType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class AddAttachmentCommand {
-    private String name;
-    private String mime;
     private AttachmentType type;
-    private Byte[] data;
+    MultipartFile file;
 }
