@@ -6,6 +6,7 @@ import com.greyhammer.erpservice.exceptions.CustomerNotFoundException;
 import com.greyhammer.erpservice.models.Project;
 import com.greyhammer.erpservice.services.ProjectService;
 import com.greyhammer.erpservice.views.ProjectView;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @RestController
 public class ProjectController {
     private final ProjectService projectService;
@@ -68,10 +70,12 @@ public class ProjectController {
                     .body(project);
 
         } catch (CustomerNotFoundException cnfex) {
+            log.error(cnfex.toString());
             Map<String, String> response = new HashMap<String, String>();
             response.put("message", "Customer not found.");
             return ResponseEntity.badRequest().body(response);
         } catch (Exception ex) {
+            log.error(ex.toString());
             Map<String, String> response = new HashMap<String, String>();
             response.put("message", "Something went wrong. Try again later.");
             return ResponseEntity.internalServerError().body(response);
