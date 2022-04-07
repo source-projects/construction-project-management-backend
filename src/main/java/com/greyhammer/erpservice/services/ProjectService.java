@@ -6,7 +6,6 @@ import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.models.Project;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
 import java.util.Set;
 
 public interface ProjectService {

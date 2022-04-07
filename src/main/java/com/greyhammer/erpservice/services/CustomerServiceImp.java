@@ -5,7 +5,9 @@ import com.greyhammer.erpservice.models.Customer;
 import com.greyhammer.erpservice.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CustomerServiceImp implements CustomerService {
@@ -39,5 +41,12 @@ public class CustomerServiceImp implements CustomerService {
             throw new CustomerNotFoundException();
 
         return customer.get();
+    }
+
+    @Override
+    public Set<Customer> getAll() {
+        Set<Customer> customers = new HashSet<>();
+        customerRepository.findAll().iterator().forEachRemaining(customers::add);
+        return customers;
     }
 }
