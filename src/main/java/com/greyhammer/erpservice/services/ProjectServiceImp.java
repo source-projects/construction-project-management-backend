@@ -55,4 +55,9 @@ public class ProjectServiceImp implements ProjectService {
         project.setCustomer(savedCustomer);
         return projectRepository.save(project);
     }
+
+    @Override
+    public long getTotalProjectCount() {
+        return projectRepository.count();
+    }
 }

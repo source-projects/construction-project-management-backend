@@ -5,6 +5,7 @@ import com.greyhammer.erpservice.commands.CreateProjectCommand;
 import com.greyhammer.erpservice.exceptions.CustomerNotFoundException;
 import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.models.Project;
+import com.greyhammer.erpservice.responses.PageResponse;
 import com.greyhammer.erpservice.services.ProjectService;
 import com.greyhammer.erpservice.views.ProjectView;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -32,16 +30,23 @@ public class ProjectController {
 
     @JsonView(ProjectView.MinimalView.class)
     @RequestMapping("/api/projects")
-    public ResponseEntity<Set<Project>> getAll(
+    public ResponseEntity<PageResponse<Project>> getAll(
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(required = false) String desc
     ) {
-        Sort sort = desc.equals("true") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Sort sort = desc != null && desc.equals("true") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return ResponseEntity.ok(projectService.getAllProjects(pageable));
+        Set<Project> results = projectService.getAllProjects(pageable);
+        PageResponse response = new PageResponse<Project>();
+        response.setResults(results);
+        response.setCount(results.size());
+        response.setPage(page);
+        response.setTotal(projectService.getTotalProjectCount());
+
+        return ResponseEntity.ok(response);
     }
 
 

@@ -12,5 +12,6 @@ import java.util.Set;
 public interface ProjectService {
     Set<Project> getAllProjects(Pageable pageable);
     Project getProjectById(Long id) throws ProjectNotFoundException;
+    long getTotalProjectCount();
     Project handleCreateCommand(CreateProjectCommand command) throws CustomerNotFoundException;
 }
