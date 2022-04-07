@@ -8,5 +8,4 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface AttachmentRepository extends CrudRepository<Attachment, Long> {
-    Optional<Set<Attachment>> findAllByProjectId(Long id);
 }

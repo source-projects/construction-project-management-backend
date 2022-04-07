@@ -1,6 +1,6 @@
 package com.greyhammer.erpservice.services;
 
-import com.greyhammer.erpservice.classes.JwtAuthentication;
+import com.greyhammer.erpservice.utils.JwtAuthentication;
 import com.greyhammer.erpservice.configurations.JWTConfiguration;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;

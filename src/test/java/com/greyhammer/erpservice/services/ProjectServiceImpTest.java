@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.HashSet;
@@ -29,12 +30,15 @@ class ProjectServiceImpTest {
     CreateProjectCommandToProjectConverter createProjectCommandToProjectConverter;
 
     @Mock
+    ApplicationEventPublisher applicationEventPublisher;
+
+    @Mock
     CustomerService customerService;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        projectService = new ProjectServiceImp(projectRepository, createProjectCommandToProjectConverter, customerService);
+        projectService = new ProjectServiceImp(projectRepository, createProjectCommandToProjectConverter, customerService, applicationEventPublisher);
     }
 
     @Test

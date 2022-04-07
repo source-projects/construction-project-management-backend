@@ -23,6 +23,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("**/health").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/api/**").authenticated()
                 //.anyRequest().authenticated()
                 .and()

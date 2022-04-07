@@ -1,4 +1,4 @@
-package com.greyhammer.erpservice.classes;
+package com.greyhammer.erpservice.utils;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
