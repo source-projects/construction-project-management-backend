@@ -1,6 +1,8 @@
 package com.greyhammer.erpservice.services;
 
+import com.greyhammer.erpservice.exceptions.NoPermissionException;
 import com.greyhammer.erpservice.exceptions.TaskInvalidAssignException;
+import com.greyhammer.erpservice.exceptions.TaskInvalidStateException;
 import com.greyhammer.erpservice.exceptions.TaskNotFoundException;
 import com.greyhammer.erpservice.models.Task;
 import com.greyhammer.erpservice.models.TaskStatus;
@@ -15,10 +17,12 @@ import java.util.Set;
 public class TaskServiceImp implements TaskService {
     private final TaskRepository taskRepository;
     private final TaskTypeService taskTypeService;
+    private final TaskEventService taskEventService;
 
-    public TaskServiceImp(TaskRepository taskRepository, TaskTypeService taskTypeService) {
+    public TaskServiceImp(TaskRepository taskRepository, TaskTypeService taskTypeService, TaskEventService taskEventService) {
         this.taskRepository = taskRepository;
         this.taskTypeService = taskTypeService;
+        this.taskEventService = taskEventService;
     }
 
     @Override
@@ -46,6 +50,29 @@ public class TaskServiceImp implements TaskService {
 
         task.setAssignedTo(assignTo);
         taskRepository.save(task);
+    }
+
+    @Override
+    public void markAsComplete(Long id, String username) throws TaskNotFoundException, TaskInvalidStateException, NoPermissionException {
+        Optional<Task> optionalTask = taskRepository.findById(id);
+
+        if (optionalTask.isEmpty()) {
+            throw new TaskNotFoundException();
+        }
+
+        Task task = optionalTask.get();
+
+        if (!task.getAssignedTo().equals(username)) {
+            throw new NoPermissionException();
+        }
+
+        if (task.getStatus() != TaskStatus.PENDING) {
+            throw new TaskInvalidStateException();
+        }
+
+        task.setStatus(TaskStatus.COMPLETED);
+        taskRepository.save(task);
+        taskEventService.notifyCompletion(task);
     }
 
     @Override

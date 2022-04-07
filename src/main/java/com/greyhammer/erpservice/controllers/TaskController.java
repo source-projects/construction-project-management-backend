@@ -1,25 +1,21 @@
 package com.greyhammer.erpservice.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.greyhammer.erpservice.exceptions.NoPermissionException;
 import com.greyhammer.erpservice.exceptions.TaskInvalidAssignException;
 import com.greyhammer.erpservice.exceptions.TaskNotFoundException;
 import com.greyhammer.erpservice.models.Task;
 import com.greyhammer.erpservice.services.TaskService;
-import com.greyhammer.erpservice.utils.JwtAuthentication;
 import com.greyhammer.erpservice.utils.UserSessionUtil;
 import com.greyhammer.erpservice.views.TaskView;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONArray;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,7 +71,6 @@ public class TaskController {
     }
 
 
-    @JsonView(TaskView.ListView.class)
     @RequestMapping(value = "/api/tasks/{id}/assign", method = RequestMethod.POST)
     public ResponseEntity<?> assignTask(@PathVariable Long id) {
         try {
@@ -85,6 +80,29 @@ public class TaskController {
             log.error(ex.toString());
             Map<String, String> response = new HashMap<>();
             response.put("message", "Cannot assign task.");
+            return ResponseEntity.badRequest().body(response);
+        } catch (TaskNotFoundException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Task not found.");
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @RequestMapping(value = "/api/tasks/{id}/complete", method = RequestMethod.POST)
+    public ResponseEntity<?> markAsComplete(@PathVariable Long id) {
+        try {
+            taskService.markAsComplete(id, UserSessionUtil.getCurrentUsername());
+            return ResponseEntity.accepted().build();
+        } catch (NoPermissionException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "No permission to update task.");
             return ResponseEntity.badRequest().body(response);
         } catch (TaskNotFoundException ex) {
             log.error(ex.toString());
