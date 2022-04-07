@@ -20,7 +20,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.headers().cacheControl();
-        http.csrf().disable()
+        http
+                .cors()
+                .and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers("**/health").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
