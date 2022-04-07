@@ -6,6 +6,7 @@ import com.greyhammer.erpservice.exceptions.TaskNotFoundException;
 import com.greyhammer.erpservice.models.Task;
 import com.greyhammer.erpservice.services.TaskService;
 import com.greyhammer.erpservice.utils.JwtAuthentication;
+import com.greyhammer.erpservice.utils.UserSessionUtil;
 import com.greyhammer.erpservice.views.TaskView;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -35,7 +36,7 @@ public class TaskController {
     @RequestMapping("/api/tasks/unassigned")
     public ResponseEntity<?> getUnassignedTasks() {
         try {
-            Set<Task> task = taskService.getUnassignedTaskByRoles(getCurrentUserRoles());
+            Set<Task> task = taskService.getUnassignedTaskByRoles(UserSessionUtil.getCurrentUserRoles());
             return ResponseEntity.ok(task);
         } catch (Exception ex) {
             log.error(ex.toString());
@@ -49,7 +50,7 @@ public class TaskController {
     @RequestMapping("/api/tasks/pending")
     public ResponseEntity<?> getPendingTasks() {
         try {
-            Set<Task> task = taskService.getAssignedPendingTask(getCurrentUsername());
+            Set<Task> task = taskService.getAssignedPendingTask(UserSessionUtil.getCurrentUsername());
             return ResponseEntity.ok(task);
         } catch (Exception ex) {
             log.error(ex.toString());
@@ -63,7 +64,7 @@ public class TaskController {
     @RequestMapping("/api/tasks/completed")
     public ResponseEntity<?> getCompletedTasks() {
         try {
-            Set<Task> task = taskService.getAssignedCompletedTask(getCurrentUsername());
+            Set<Task> task = taskService.getAssignedCompletedTask(UserSessionUtil.getCurrentUsername());
             return ResponseEntity.ok(task);
         } catch (Exception ex) {
             log.error(ex.toString());
@@ -78,7 +79,7 @@ public class TaskController {
     @RequestMapping(value = "/api/tasks/{id}/assign", method = RequestMethod.POST)
     public ResponseEntity<?> assignTask(@PathVariable Long id) {
         try {
-            taskService.assignTask(id, getCurrentUserRoles(), getCurrentUsername());
+            taskService.assignTask(id, UserSessionUtil.getCurrentUserRoles(), UserSessionUtil.getCurrentUsername());
             return ResponseEntity.accepted().build();
         } catch (TaskInvalidAssignException ex) {
             log.error(ex.toString());
@@ -96,21 +97,5 @@ public class TaskController {
             response.put("message", "Something went wrong. Try again later.");
             return ResponseEntity.internalServerError().body(response);
         }
-    }
-
-    private String getCurrentUsername() {
-        JwtAuthentication authentication = (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
-    }
-
-    private Set<String> getCurrentUserRoles() {
-        JwtAuthentication authentication = (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
-
-        JSONArray roleClaims = (JSONArray) authentication.getJwtClaimsSet().getClaim("cognito:groups");
-        Set<String> roles = new HashSet<>();
-        for (Object role: roleClaims.toArray()) {
-            roles.add(role.toString());
-        }
-        return roles;
     }
 }
