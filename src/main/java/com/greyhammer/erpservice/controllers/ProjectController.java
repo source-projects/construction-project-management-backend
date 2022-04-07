@@ -3,6 +3,7 @@ package com.greyhammer.erpservice.controllers;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.greyhammer.erpservice.commands.CreateProjectCommand;
 import com.greyhammer.erpservice.exceptions.CustomerNotFoundException;
+import com.greyhammer.erpservice.exceptions.NoPermissionException;
 import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.models.Project;
 import com.greyhammer.erpservice.responses.PageResponse;
@@ -74,9 +75,7 @@ public class ProjectController {
     public ResponseEntity<Object> create(@RequestBody CreateProjectCommand command) {
         try {
             if(!UserSessionUtil.getCurrentUserRoles().contains("admin")) {
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "You do not have the permission to create a project.");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+                throw new NoPermissionException();
             }
 
             Project project = projectService.handleCreateCommand(command);
@@ -88,8 +87,13 @@ public class ProjectController {
             return ResponseEntity.created(uri)
                     .body(project);
 
-        } catch (CustomerNotFoundException cnfex) {
-            log.error(cnfex.toString());
+        } catch (NoPermissionException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "You do not have the permission to create a project.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (CustomerNotFoundException ex) {
+            log.error(ex.toString());
             Map<String, String> response = new HashMap<>();
             response.put("message", "Customer not found.");
             return ResponseEntity.badRequest().body(response);
