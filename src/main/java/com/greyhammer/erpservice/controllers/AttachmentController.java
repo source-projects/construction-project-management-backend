@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,13 +30,13 @@ public class AttachmentController {
     }
 
     @JsonView(AttachmentView.MetaView.class)
-    @RequestMapping("/projects/{projectId}/attachments")
+    @RequestMapping("/api/projects/{projectId}/attachments")
     public ResponseEntity<Set<Attachment>> getAll(@PathVariable Long projectId) {
         return null;
     }
 
     @JsonView(AttachmentView.MetaView.class)
-    @RequestMapping(value = "/projects/{projectId}/attachments", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/projects/{projectId}/attachments", method = RequestMethod.POST)
     public ResponseEntity<Object> add(@PathVariable Long projectId, @ModelAttribute AddAttachmentCommand command) {
         try {
             Attachment attachment = attachmentService.handleAddAttachmentCommand(projectId, command);
@@ -62,7 +60,7 @@ public class AttachmentController {
     }
 
     @JsonView(AttachmentView.FullView.class)
-    @RequestMapping("/projects/{projectId}/attachments/{attachmentId}")
+    @RequestMapping("/api/projects/{projectId}/attachments/{attachmentId}")
     public ResponseEntity<Object> get(@PathVariable Long projectId, @PathVariable Long attachmentId) {
         try {
             Attachment attachment = attachmentService.get(projectId, attachmentId);
@@ -96,7 +94,7 @@ public class AttachmentController {
         }
     }
 
-    @RequestMapping(value = "/projects/{projectId}/attachments/{attachmentId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/projects/{projectId}/attachments/{attachmentId}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> delete(@PathVariable Long projectId, @PathVariable Long attachmentId) {
         try {
             attachmentService.deleteAttachment(projectId, attachmentId);

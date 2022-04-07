@@ -31,21 +31,21 @@ public class ProjectController {
     }
 
     @JsonView(ProjectView.MinimalView.class)
-    @RequestMapping("/projects")
+    @RequestMapping("/api/projects")
     public ResponseEntity<Set<Project>> getAll(
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(required = false) String desc
     ) {
-        Sort sort = desc == "true" ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Sort sort = desc.equals("true") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return ResponseEntity.ok(projectService.getAllProjects(pageable));
     }
 
 
-    @RequestMapping("/projects/{id}")
+    @RequestMapping("/api/projects/{id}")
     @JsonView(ProjectView.FullView.class)
     public ResponseEntity<Object> get(@PathVariable Long id) {
         try {
@@ -55,7 +55,7 @@ public class ProjectController {
             return ResponseEntity.notFound().build();
         } catch (Exception ex) {
             log.error(ex.toString());
-            Map<String, String> response = new HashMap<String, String>();
+            Map<String, String> response = new HashMap<>();
             response.put("message", "Something went wrong. Try again later.");
             return ResponseEntity.internalServerError().body(response);
         }
@@ -63,7 +63,7 @@ public class ProjectController {
 
     @PostMapping
     @JsonView(ProjectView.FullView.class)
-    @RequestMapping(value = "/projects", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/projects", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody CreateProjectCommand command) {
         try {
             Project project = projectService.handleCreateCommand(command);
@@ -77,12 +77,12 @@ public class ProjectController {
 
         } catch (CustomerNotFoundException cnfex) {
             log.error(cnfex.toString());
-            Map<String, String> response = new HashMap<String, String>();
+            Map<String, String> response = new HashMap<>();
             response.put("message", "Customer not found.");
             return ResponseEntity.badRequest().body(response);
         } catch (Exception ex) {
             log.error(ex.toString());
-            Map<String, String> response = new HashMap<String, String>();
+            Map<String, String> response = new HashMap<>();
             response.put("message", "Something went wrong. Try again later.");
             return ResponseEntity.internalServerError().body(response);
         }
