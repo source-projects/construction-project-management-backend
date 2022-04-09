@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AttachmentServiceImp implements  AttachmentService {
@@ -39,14 +40,19 @@ public class AttachmentServiceImp implements  AttachmentService {
         Project project = projectService.getProjectById(projectId);
 
         Attachment attachment = addAttachmentCommandToAttachmentConverter.convert(command);
-        attachment.setProject(project);
 
-        if (command.getTaskId() != null) {
-            Task task = taskService.get(command.getTaskId());
-            attachment.setTask(task);
+        if (attachment != null) {
+            attachment.setProject(project);
+
+            if (command.getTaskId() != null) {
+                Task task = taskService.get(command.getTaskId());
+                attachment.setTask(task);
+            }
+
+            return attachmentRepository.save(attachment);
         }
 
-        return attachmentRepository.save(attachment);
+        return null;
     }
 
     @Override
@@ -69,4 +75,13 @@ public class AttachmentServiceImp implements  AttachmentService {
         return attachment.get();
     }
 
+    @Override
+    public Set<Attachment> getByProjectId(Long projectId) {
+        return attachmentRepository.findAllByProjectId(projectId);
+    }
+
+    @Override
+    public Set<Attachment> getByProjectIdAndTaskId(Long projectId, Long taskId) {
+        return attachmentRepository.findAllByProjectIdAndTaskId(projectId, taskId);
+    }
 }

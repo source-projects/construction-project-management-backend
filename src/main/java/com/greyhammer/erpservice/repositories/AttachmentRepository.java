@@ -8,4 +8,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface AttachmentRepository extends CrudRepository<Attachment, Long> {
+    Set<Attachment> findAllByProjectId(Long projectId);
+    Set<Attachment> findAllByProjectIdAndTaskId(Long projectId, Long taskId);
 }

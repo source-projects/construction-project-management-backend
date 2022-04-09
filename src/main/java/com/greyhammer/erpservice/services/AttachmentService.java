@@ -7,10 +7,12 @@ import com.greyhammer.erpservice.exceptions.ProjectNotMatchException;
 import com.greyhammer.erpservice.exceptions.TaskNotFoundException;
 import com.greyhammer.erpservice.models.Attachment;
 
-import java.util.Optional;
+import java.util.Set;
 
 public interface AttachmentService {
     Attachment handleAddAttachmentCommand(Long projectId, AddAttachmentCommand command) throws ProjectNotFoundException, TaskNotFoundException;
     void deleteAttachment(Long projectId, Long attachmentId) throws AttachmentNotFoundException, ProjectNotMatchException;
     Attachment get(Long projectId, Long attachmentId) throws AttachmentNotFoundException, ProjectNotMatchException;
+    Set<Attachment> getByProjectId(Long projectId);
+    Set<Attachment> getByProjectIdAndTaskId(Long projectId, Long taskId);
 }

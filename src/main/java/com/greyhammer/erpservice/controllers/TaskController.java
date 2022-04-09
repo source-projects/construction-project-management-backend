@@ -32,8 +32,8 @@ public class TaskController {
     @RequestMapping("/api/tasks/unassigned")
     public ResponseEntity<?> getUnassignedTasks() {
         try {
-            Set<Task> task = taskService.getUnassignedTaskByRoles(UserSessionUtil.getCurrentUserRoles());
-            return ResponseEntity.ok(task);
+            Set<Task> tasks = taskService.getUnassignedTaskByRoles(UserSessionUtil.getCurrentUserRoles());
+            return ResponseEntity.ok(tasks);
         } catch (Exception ex) {
             log.error(ex.toString());
             Map<String, String> response = new HashMap<>();

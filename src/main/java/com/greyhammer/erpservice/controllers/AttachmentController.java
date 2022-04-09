@@ -31,8 +31,18 @@ public class AttachmentController {
 
     @JsonView(AttachmentView.MetaView.class)
     @RequestMapping("/api/projects/{projectId}/attachments")
-    public ResponseEntity<Set<Attachment>> getAll(@PathVariable Long projectId) {
-        return null;
+    public ResponseEntity<?> getAll(@PathVariable Long projectId, @RequestParam() Long taskId) {
+        try {
+            Set<Attachment> attachments = taskId == null
+                    ? attachmentService.getByProjectId(projectId)
+                    : attachmentService.getByProjectIdAndTaskId(projectId, taskId);
+            return ResponseEntity.ok(attachments);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 
     @JsonView(AttachmentView.MetaView.class)
