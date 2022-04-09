@@ -4,6 +4,7 @@ import com.greyhammer.erpservice.exceptions.CustomerNotFoundException;
 import com.greyhammer.erpservice.models.Customer;
 import com.greyhammer.erpservice.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -29,6 +30,7 @@ public class CustomerServiceImp implements CustomerService {
     }
 
     @Override
+    @Transactional
     public Customer save(Customer customer) {
         return customerRepository.save(customer);
     }

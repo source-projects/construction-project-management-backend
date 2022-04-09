@@ -1,20 +1,23 @@
 package com.greyhammer.erpservice.converters;
 
 import com.greyhammer.erpservice.commands.AddAttachmentCommand;
+import com.greyhammer.erpservice.exceptions.TaskNotFoundException;
 import com.greyhammer.erpservice.models.Attachment;
 import com.greyhammer.erpservice.models.AttachmentObject;
+import com.greyhammer.erpservice.models.Task;
+import com.greyhammer.erpservice.services.TaskService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class AddAttachmentCommandToAttachmentConverter implements Converter<AddAttachmentCommand, Attachment> {
     @Override
     public Attachment convert(AddAttachmentCommand source) {
-
-
         Attachment attachment = new Attachment();
         attachment.setType(source.getType());
 
@@ -33,8 +36,8 @@ public class AddAttachmentCommandToAttachmentConverter implements Converter<AddA
 
             object.setData(data);
             object.setAttachment(attachment);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error(e.toString());
         }
 
         return attachment;

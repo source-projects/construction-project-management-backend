@@ -5,8 +5,10 @@ import com.greyhammer.erpservice.converters.AddAttachmentCommandToAttachmentConv
 import com.greyhammer.erpservice.exceptions.AttachmentNotFoundException;
 import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.exceptions.ProjectNotMatchException;
+import com.greyhammer.erpservice.exceptions.TaskNotFoundException;
 import com.greyhammer.erpservice.models.Attachment;
 import com.greyhammer.erpservice.models.Project;
+import com.greyhammer.erpservice.models.Task;
 import com.greyhammer.erpservice.repositories.AttachmentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,20 +20,31 @@ public class AttachmentServiceImp implements  AttachmentService {
     AddAttachmentCommandToAttachmentConverter addAttachmentCommandToAttachmentConverter;
     AttachmentRepository attachmentRepository;
     ProjectService projectService;
+    TaskService taskService;
 
-    public AttachmentServiceImp(AddAttachmentCommandToAttachmentConverter addAttachmentCommandToAttachmentConverter, AttachmentRepository attachmentRepository, ProjectService projectService) {
+    public AttachmentServiceImp(
+            AddAttachmentCommandToAttachmentConverter addAttachmentCommandToAttachmentConverter,
+            AttachmentRepository attachmentRepository,
+            ProjectService projectService,
+            TaskService taskService) {
         this.addAttachmentCommandToAttachmentConverter = addAttachmentCommandToAttachmentConverter;
         this.attachmentRepository = attachmentRepository;
         this.projectService = projectService;
+        this.taskService = taskService;
     }
 
     @Override
     @Transactional
-    public Attachment handleAddAttachmentCommand(Long projectId, AddAttachmentCommand command) throws ProjectNotFoundException {
+    public Attachment handleAddAttachmentCommand(Long projectId, AddAttachmentCommand command) throws ProjectNotFoundException, TaskNotFoundException {
         Project project = projectService.getProjectById(projectId);
 
         Attachment attachment = addAttachmentCommandToAttachmentConverter.convert(command);
         attachment.setProject(project);
+
+        if (command.getTaskId() != null) {
+            Task task = taskService.get(command.getTaskId());
+            attachment.setTask(task);
+        }
 
         return attachmentRepository.save(attachment);
     }

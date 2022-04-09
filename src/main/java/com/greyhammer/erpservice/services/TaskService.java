@@ -15,4 +15,5 @@ public interface TaskService {
     Set<Task> getUnassignedTaskByRoles(Set<String> roles);
     Set<Task> getAssignedPendingTask(String assignTo);
     Set<Task> getAssignedCompletedTask(String assignTo);
+    Task get(Long id) throws TaskNotFoundException;
 }

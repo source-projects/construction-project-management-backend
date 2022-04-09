@@ -34,4 +34,7 @@ public class Attachment {
 
     @ManyToOne
     private Project project;
+    
+    @ManyToOne
+    private Task task;
 }

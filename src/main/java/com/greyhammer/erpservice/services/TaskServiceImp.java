@@ -90,4 +90,15 @@ public class TaskServiceImp implements TaskService {
     public Set<Task> getAssignedCompletedTask(String assignTo) {
         return taskRepository.findAllByAssignedToAndStatus(assignTo, TaskStatus.COMPLETED);
     }
+
+    @Override
+    public Task get(Long id) throws TaskNotFoundException {
+        Optional<Task> task = taskRepository.findById(id);
+
+        if (task.isEmpty()) {
+            throw new TaskNotFoundException();
+        }
+
+        return task.get();
+    }
 }
