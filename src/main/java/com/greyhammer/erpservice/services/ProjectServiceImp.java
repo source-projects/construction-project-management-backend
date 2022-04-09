@@ -5,9 +5,11 @@ import com.greyhammer.erpservice.commands.SetProjectDesignStatusCommand;
 import com.greyhammer.erpservice.converters.CreateProjectCommandToProjectConverter;
 import com.greyhammer.erpservice.events.CreateProjectEvent;
 import com.greyhammer.erpservice.exceptions.CustomerNotFoundException;
+import com.greyhammer.erpservice.exceptions.ProjectInvalidStateException;
 import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.models.Customer;
 import com.greyhammer.erpservice.models.Project;
+import com.greyhammer.erpservice.models.ProjectStatus;
 import com.greyhammer.erpservice.repositories.ProjectRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -69,8 +71,13 @@ public class ProjectServiceImp implements ProjectService {
 
     @Override
     @Transactional
-    public Project handleSetDesignStatusCommand(SetProjectDesignStatusCommand command) throws ProjectNotFoundException {
+    public Project handleSetDesignStatusCommand(SetProjectDesignStatusCommand command) throws ProjectNotFoundException, ProjectInvalidStateException {
         Project project = getProjectById(command.getProjectId());
+
+        if (project.getStatus() != ProjectStatus.DESIGN) {
+            throw new ProjectInvalidStateException();
+        }
+
         project.setDesignStatus(command.getStatus());
         return projectRepository.save(project);
     }

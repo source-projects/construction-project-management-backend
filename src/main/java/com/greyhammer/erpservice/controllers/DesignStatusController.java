@@ -2,9 +2,9 @@ package com.greyhammer.erpservice.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.greyhammer.erpservice.commands.SetProjectDesignStatusCommand;
+import com.greyhammer.erpservice.exceptions.ProjectInvalidStateException;
 import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.services.ProjectService;
-import com.greyhammer.erpservice.views.AttachmentView;
 import com.greyhammer.erpservice.views.ProjectView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +32,11 @@ public class DesignStatusController {
         try {
             command.setProjectId(projectId);
             return ResponseEntity.ok(projectService.handleSetDesignStatusCommand(command));
+        } catch (ProjectInvalidStateException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Cannot set design status.");
+            return ResponseEntity.internalServerError().body(response);
         } catch (ProjectNotFoundException ex) {
             log.error(ex.toString());
             return ResponseEntity.notFound().build();
