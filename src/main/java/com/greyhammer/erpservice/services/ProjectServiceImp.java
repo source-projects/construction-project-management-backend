@@ -41,14 +41,14 @@ public class ProjectServiceImp implements ProjectService {
         this.applicationEventPublisher =applicationEventPublisher;
     }
 
-    public Set<Project> getAllProjects(Pageable pageable) {
+    public Set<Project> getAll(Pageable pageable) {
         Set<Project> projects = new HashSet<>();
         projectRepository.findAll(pageable).iterator().forEachRemaining(projects::add);
         return projects;
     }
 
     @Override
-    public Project getProjectById(Long id) throws ProjectNotFoundException {
+    public Project get(Long id) throws ProjectNotFoundException {
         Optional<Project> project = projectRepository.findById(id);
 
         if (project.isEmpty())
@@ -72,7 +72,7 @@ public class ProjectServiceImp implements ProjectService {
     @Override
     @Transactional
     public Project handleSetDesignStatusCommand(SetProjectDesignStatusCommand command) throws ProjectNotFoundException, ProjectInvalidStateException {
-        Project project = getProjectById(command.getProjectId());
+        Project project = get(command.getProjectId());
 
         if (project.getStatus() != ProjectStatus.DESIGN) {
             throw new ProjectInvalidStateException();

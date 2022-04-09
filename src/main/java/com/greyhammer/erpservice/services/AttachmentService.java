@@ -13,6 +13,6 @@ public interface AttachmentService {
     Attachment handleAddAttachmentCommand(Long projectId, AddAttachmentCommand command) throws ProjectNotFoundException, TaskNotFoundException;
     void deleteAttachment(Long projectId, Long attachmentId) throws AttachmentNotFoundException, ProjectNotMatchException;
     Attachment get(Long projectId, Long attachmentId) throws AttachmentNotFoundException, ProjectNotMatchException;
-    Set<Attachment> getByProjectId(Long projectId);
-    Set<Attachment> getByProjectIdAndTaskId(Long projectId, Long taskId);
+    Set<Attachment> getAllByProjectId(Long projectId);
+    Set<Attachment> getAllByProjectIdAndTaskId(Long projectId, Long taskId);
 }

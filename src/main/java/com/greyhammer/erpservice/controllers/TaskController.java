@@ -6,7 +6,6 @@ import com.greyhammer.erpservice.exceptions.TaskInvalidAssignException;
 import com.greyhammer.erpservice.exceptions.TaskNotFoundException;
 import com.greyhammer.erpservice.models.Task;
 import com.greyhammer.erpservice.services.TaskService;
-import com.greyhammer.erpservice.utils.UserSessionUtil;
 import com.greyhammer.erpservice.views.TaskView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +31,7 @@ public class TaskController {
     @RequestMapping("/api/tasks/unassigned")
     public ResponseEntity<?> getUnassignedTasks() {
         try {
-            Set<Task> tasks = taskService.getUnassignedTaskByRoles(UserSessionUtil.getCurrentUserRoles());
+            Set<Task> tasks = taskService.getUnassignedTask();
             return ResponseEntity.ok(tasks);
         } catch (Exception ex) {
             log.error(ex.toString());
@@ -46,7 +45,7 @@ public class TaskController {
     @RequestMapping("/api/tasks/pending")
     public ResponseEntity<?> getPendingTasks() {
         try {
-            Set<Task> task = taskService.getAssignedPendingTask(UserSessionUtil.getCurrentUsername());
+            Set<Task> task = taskService.getAssignedPendingTask();
             return ResponseEntity.ok(task);
         } catch (Exception ex) {
             log.error(ex.toString());
@@ -60,7 +59,7 @@ public class TaskController {
     @RequestMapping("/api/tasks/completed")
     public ResponseEntity<?> getCompletedTasks() {
         try {
-            Set<Task> task = taskService.getAssignedCompletedTask(UserSessionUtil.getCurrentUsername());
+            Set<Task> task = taskService.getAssignedCompletedTask();
             return ResponseEntity.ok(task);
         } catch (Exception ex) {
             log.error(ex.toString());
@@ -74,7 +73,7 @@ public class TaskController {
     @RequestMapping(value = "/api/tasks/{id}/assign", method = RequestMethod.POST)
     public ResponseEntity<?> assignTask(@PathVariable Long id) {
         try {
-            taskService.assignTask(id, UserSessionUtil.getCurrentUserRoles(), UserSessionUtil.getCurrentUsername());
+            taskService.assignTask(id);
             return ResponseEntity.accepted().build();
         } catch (TaskInvalidAssignException ex) {
             log.error(ex.toString());
@@ -97,7 +96,7 @@ public class TaskController {
     @RequestMapping(value = "/api/tasks/{id}/complete", method = RequestMethod.POST)
     public ResponseEntity<?> markAsComplete(@PathVariable Long id) {
         try {
-            taskService.markAsComplete(id, UserSessionUtil.getCurrentUsername());
+            taskService.markAsComplete(id);
             return ResponseEntity.accepted().build();
         } catch (NoPermissionException ex) {
             log.error(ex.toString());

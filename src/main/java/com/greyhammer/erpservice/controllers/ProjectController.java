@@ -42,8 +42,8 @@ public class ProjectController {
         Sort sort = desc != null && desc.equals("true") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Set<Project> results = projectService.getAllProjects(pageable);
-        PageResponse response = new PageResponse<Project>();
+        Set<Project> results = projectService.getAll(pageable);
+        PageResponse<Project> response = new PageResponse<>();
         response.setResults(results);
         response.setCount(results.size());
         response.setPage(page);
@@ -57,7 +57,7 @@ public class ProjectController {
     @JsonView(ProjectView.FullView.class)
     public ResponseEntity<Object> get(@PathVariable Long id) {
         try {
-            Project project = projectService.getProjectById(id);
+            Project project = projectService.get(id);
             return ResponseEntity.ok(project);
         } catch (ProjectNotFoundException ex) {
             return ResponseEntity.notFound().build();

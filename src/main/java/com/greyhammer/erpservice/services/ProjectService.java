@@ -11,8 +11,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.Set;
 
 public interface ProjectService {
-    Set<Project> getAllProjects(Pageable pageable);
-    Project getProjectById(Long id) throws ProjectNotFoundException;
+    Set<Project> getAll(Pageable pageable);
+    Project get(Long id) throws ProjectNotFoundException;
     long getTotalProjectCount();
     Project handleCreateCommand(CreateProjectCommand command) throws CustomerNotFoundException;
     Project handleSetDesignStatusCommand(SetProjectDesignStatusCommand command) throws ProjectNotFoundException, ProjectInvalidStateException;

@@ -37,7 +37,7 @@ public class AttachmentServiceImp implements  AttachmentService {
     @Override
     @Transactional
     public Attachment handleAddAttachmentCommand(Long projectId, AddAttachmentCommand command) throws ProjectNotFoundException, TaskNotFoundException {
-        Project project = projectService.getProjectById(projectId);
+        Project project = projectService.get(projectId);
 
         Attachment attachment = addAttachmentCommandToAttachmentConverter.convert(command);
 
@@ -76,12 +76,12 @@ public class AttachmentServiceImp implements  AttachmentService {
     }
 
     @Override
-    public Set<Attachment> getByProjectId(Long projectId) {
+    public Set<Attachment> getAllByProjectId(Long projectId) {
         return attachmentRepository.findAllByProjectId(projectId);
     }
 
     @Override
-    public Set<Attachment> getByProjectIdAndTaskId(Long projectId, Long taskId) {
+    public Set<Attachment> getAllByProjectIdAndTaskId(Long projectId, Long taskId) {
         return attachmentRepository.findAllByProjectIdAndTaskId(projectId, taskId);
     }
 }

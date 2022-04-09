@@ -2,7 +2,6 @@ package com.greyhammer.erpservice.services;
 
 import com.greyhammer.erpservice.converters.CreateProjectCommandToProjectConverter;
 import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
-import com.greyhammer.erpservice.models.Customer;
 import com.greyhammer.erpservice.models.Project;
 import com.greyhammer.erpservice.repositories.ProjectRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,13 +46,13 @@ class ProjectServiceImpTest {
         project.setId(1L);
         Project project2 = new Project();
         project.setId(2L);
-        Set<Project> projects = new HashSet<Project>();
+        Set<Project> projects = new HashSet<>();
         projects.add(project);
         projects.add(project2);
 
         when(projectRepository.findAll()).thenReturn(projects);
 
-        assertEquals(projectService.getAllProjects(PageRequest.of(0,5)).size(), 2);
+        assertEquals(projectService.getAll(PageRequest.of(0,5)).size(), 2);
         verify(projectRepository, times(1)).findAll();
     }
 
@@ -64,7 +63,7 @@ class ProjectServiceImpTest {
 
         when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
 
-        assertDoesNotThrow(() -> projectService.getProjectById(1L));
-        assertThrows(ProjectNotFoundException.class, () -> projectService.getProjectById(2L));
+        assertDoesNotThrow(() -> projectService.get(1L));
+        assertThrows(ProjectNotFoundException.class, () -> projectService.get(2L));
     }
 }

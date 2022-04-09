@@ -1,5 +1,7 @@
 package com.greyhammer.erpservice.models;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.greyhammer.erpservice.views.ScopeOfWorkView;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,16 +13,16 @@ import java.util.Set;
 public class ScopeOfWork {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(ScopeOfWorkView.L1View.class)
     private Long id;
 
+    @JsonView(ScopeOfWorkView.L1View.class)
     private String name;
-    private String unit;
-    private Double qty;
-    private Double laborCost;
 
     @ManyToOne
     private Project project;
 
+    @JsonView(ScopeOfWorkView.L1View.class)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "scope")
     private Set<ScopeOfWorkTask> tasks;
 
