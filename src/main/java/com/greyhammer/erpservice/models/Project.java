@@ -52,6 +52,10 @@ public class Project {
     private Set<PurchaseOrder> pos;
 
     @Enumerated(value = EnumType.STRING)
+    @JsonView({ProjectView.FullView.class})
+    private ProjectDesignStatus designStatus;
+
+    @Enumerated(value = EnumType.STRING)
     @JsonView({ProjectView.MinimalView.class})
     private ProjectStatus status;
 

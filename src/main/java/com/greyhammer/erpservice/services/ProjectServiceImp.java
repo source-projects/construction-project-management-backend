@@ -1,6 +1,7 @@
 package com.greyhammer.erpservice.services;
 
 import com.greyhammer.erpservice.commands.CreateProjectCommand;
+import com.greyhammer.erpservice.commands.SetProjectDesignStatusCommand;
 import com.greyhammer.erpservice.converters.CreateProjectCommandToProjectConverter;
 import com.greyhammer.erpservice.events.CreateProjectEvent;
 import com.greyhammer.erpservice.exceptions.CustomerNotFoundException;
@@ -39,7 +40,7 @@ public class ProjectServiceImp implements ProjectService {
     }
 
     public Set<Project> getAllProjects(Pageable pageable) {
-        Set<Project> projects = new HashSet<Project>();
+        Set<Project> projects = new HashSet<>();
         projectRepository.findAll(pageable).iterator().forEachRemaining(projects::add);
         return projects;
     }
@@ -59,8 +60,19 @@ public class ProjectServiceImp implements ProjectService {
     public Project handleCreateCommand(CreateProjectCommand command) throws CustomerNotFoundException {
         Project project = createProjectCommandToProjectConverter.convert(command);
         Customer savedCustomer = customerService.getOrCreate(command.getCustomer());
-        project.setCustomer(savedCustomer);
-        return saveProject(project);
+
+        if (project != null) {
+            project.setCustomer(savedCustomer);
+        }
+        return createProject(project);
+    }
+
+    @Override
+    @Transactional
+    public Project handleSetDesignStatusCommand(SetProjectDesignStatusCommand command) throws ProjectNotFoundException {
+        Project project = getProjectById(command.getProjectId());
+        project.setDesignStatus(command.getStatus());
+        return projectRepository.save(project);
     }
 
     @Override
@@ -68,7 +80,7 @@ public class ProjectServiceImp implements ProjectService {
         return projectRepository.count();
     }
 
-    private Project saveProject(Project project) {
+    private Project createProject(Project project) {
         log.debug("Saving new project to repository..");
         projectRepository.save(project);
 
