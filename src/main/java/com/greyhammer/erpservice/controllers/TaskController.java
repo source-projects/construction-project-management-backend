@@ -28,6 +28,25 @@ public class TaskController {
     }
 
     @JsonView(TaskView.ListView.class)
+    @RequestMapping("/api/tasks/{id}")
+    public ResponseEntity<?> get(@PathVariable Long id) {
+        try {
+            Task task = taskService.get(id);
+            return ResponseEntity.ok(task);
+        } catch (TaskNotFoundException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Task not found.");
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @JsonView(TaskView.ListView.class)
     @RequestMapping("/api/tasks/unassigned")
     public ResponseEntity<?> getUnassignedTasks() {
         try {

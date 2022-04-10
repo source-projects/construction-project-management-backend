@@ -11,6 +11,7 @@ import com.greyhammer.erpservice.repositories.TaskRepository;
 import com.greyhammer.erpservice.utils.UserSessionUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ public class TaskServiceImp implements TaskService {
 
     @Override
     public void dispatchTask(Task task) {
+        task.setDate(new Date());
         taskRepository.save(task);
     }
 

@@ -13,5 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class AddAttachmentCommand {
     private AttachmentType type;
     private MultipartFile file;
+    private String name;
     private Long taskId;
 }

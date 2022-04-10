@@ -30,7 +30,7 @@ public class CreateProjectEventListener implements ApplicationListener<CreatePro
         TaskBuilder builder = new TaskBuilder();
 
         Task task = builder
-            .project(event.getProject())
+            .project(project)
             .type(project.getHasExistingDesign()
                 ? TaskType.DEFINE_SCOPE_OF_WORK
                 : TaskType.FOR_ARCHITECTURAL_DESIGN)

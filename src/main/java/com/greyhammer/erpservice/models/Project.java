@@ -5,6 +5,7 @@ import com.greyhammer.erpservice.views.ProjectView;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -30,6 +31,9 @@ public class Project {
     @ManyToOne
     @JsonView({ProjectView.MinimalView.class})
     private Customer customer;
+
+    @JsonView({ProjectView.MinimalView.class})
+    private Date date;
 
     @JsonView({ProjectView.FullView.class})
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")

@@ -2,6 +2,7 @@ package com.greyhammer.erpservice.models;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.greyhammer.erpservice.views.AttachmentView;
+import com.greyhammer.erpservice.views.ProjectView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,12 +15,12 @@ public class Attachment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView({AttachmentView.MetaView.class})
+    @JsonView({AttachmentView.MetaView.class, ProjectView.FullView.class})
     private Long id;
 
-    @JsonView({AttachmentView.MetaView.class})
+    @JsonView({AttachmentView.MetaView.class, ProjectView.FullView.class})
     private String mime;
-    @JsonView({AttachmentView.MetaView.class})
+    @JsonView({AttachmentView.MetaView.class, ProjectView.FullView.class})
     private String name;
     @JsonView({AttachmentView.MetaView.class})
     private String purpose;
@@ -29,7 +30,7 @@ public class Attachment {
     private AttachmentObject object;
 
     @Enumerated(value = EnumType.STRING)
-    @JsonView({AttachmentView.MetaView.class})
+    @JsonView({AttachmentView.MetaView.class, ProjectView.FullView.class})
     private AttachmentType type;
 
     @ManyToOne

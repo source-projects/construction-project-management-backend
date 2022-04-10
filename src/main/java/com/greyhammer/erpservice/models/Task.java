@@ -6,6 +6,7 @@ import com.greyhammer.erpservice.views.TaskView;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 @Getter
@@ -19,6 +20,10 @@ public class Task {
 
     @JsonView(TaskView.ListView.class)
     private String assignedTo;
+
+    @JsonView(TaskView.ListView.class)
+    private Date date;
+
     private String createdBy;
 
     @ManyToOne

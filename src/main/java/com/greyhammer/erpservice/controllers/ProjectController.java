@@ -36,11 +36,14 @@ public class ProjectController {
     public ResponseEntity<PageResponse<Project>> getAll(
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size,
-            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String desc
     ) {
-        Sort sort = desc != null && desc.equals("true") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Sort.Direction dir = desc != null && desc.equals("true") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = sortBy == null
+            ? PageRequest.of(page, size)
+            : PageRequest.of(page, size, Sort.by(dir, sortBy));
 
         Set<Project> results = projectService.getAll(pageable);
         PageResponse<Project> response = new PageResponse<>();

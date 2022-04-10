@@ -27,7 +27,7 @@ public class AddAttachmentCommandToAttachmentConverter implements Converter<AddA
             MultipartFile file = source.getFile();
             Byte[] data = new Byte[file.getBytes().length];
             attachment.setMime(file.getContentType());
-            attachment.setName(file.getName());
+            attachment.setName(source.getName());
 
             int i=0;
             for (byte b: file.getBytes()) {
