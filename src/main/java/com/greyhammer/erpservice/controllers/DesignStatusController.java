@@ -9,10 +9,7 @@ import com.greyhammer.erpservice.views.ProjectView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +25,7 @@ public class DesignStatusController {
 
     @JsonView(ProjectView.MinimalView.class)
     @RequestMapping(value = "/api/projects/{projectId}/design-status", method = RequestMethod.PUT)
-    public ResponseEntity<?> set(@PathVariable Long projectId, @ModelAttribute SetProjectDesignStatusCommand command) {
+    public ResponseEntity<?> set(@PathVariable Long projectId, @RequestBody SetProjectDesignStatusCommand command) {
         try {
             command.setProjectId(projectId);
             return ResponseEntity.ok(projectService.handleSetDesignStatusCommand(command));

@@ -37,5 +37,6 @@ public class Attachment {
     private Project project;
     
     @ManyToOne
+    @JsonView({ProjectView.FullView.class})
     private Task task;
 }

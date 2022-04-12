@@ -58,6 +58,11 @@ public class ProjectServiceImp implements ProjectService {
     }
 
     @Override
+    public Project save(Project project) {
+        return projectRepository.save(project);
+    }
+
+    @Override
     @Transactional
     public Project handleCreateCommand(CreateProjectCommand command) throws CustomerNotFoundException {
         Project project = createProjectCommandToProjectConverter.convert(command);
