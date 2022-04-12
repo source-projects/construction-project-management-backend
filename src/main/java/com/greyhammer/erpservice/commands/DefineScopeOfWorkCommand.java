@@ -26,8 +26,6 @@ public class DefineScopeOfWorkCommand {
         private CommandType type;
         private Long id;
         private String name;
-        private String unit;
-        private Double qty;
         private Set<TaskCommand> tasks;
     }
 

@@ -8,27 +8,32 @@ import com.greyhammer.erpservice.models.Project;
 import com.greyhammer.erpservice.models.ScopeOfWork;
 import com.greyhammer.erpservice.models.ScopeOfWorkMaterial;
 import com.greyhammer.erpservice.models.ScopeOfWorkTask;
+import com.greyhammer.erpservice.repositories.ScopeOfWorkMaterialRepository;
 import com.greyhammer.erpservice.repositories.ScopeOfWorkRepository;
+import com.greyhammer.erpservice.repositories.ScopeOfWorkTaskRepository;
 import com.greyhammer.erpservice.utils.UserSessionUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
     private final ScopeOfWorkRepository scopeOfWorkRepository;
+    private final ScopeOfWorkTaskRepository scopeOfWorkTaskRepository;
+    private final ScopeOfWorkMaterialRepository scopeOfWorkMaterialRepository;
     private final ProjectService projectService;
     private final DefineScopeOfWorkCommandToScopeOfWorkConverter defineScopeOfWorkCommandToScopeOfWorkConverter;
 
     public ScopeOfWorkServiceImp(
             ScopeOfWorkRepository scopeOfWorkRepository,
+            ScopeOfWorkTaskRepository scopeOfWorkTaskRepository,
+            ScopeOfWorkMaterialRepository scopeOfWorkMaterialRepository,
             ProjectService projectService,
             DefineScopeOfWorkCommandToScopeOfWorkConverter defineScopeOfWorkCommandToScopeOfWorkConverter) {
         this.scopeOfWorkRepository = scopeOfWorkRepository;
+        this.scopeOfWorkTaskRepository = scopeOfWorkTaskRepository;
+        this.scopeOfWorkMaterialRepository = scopeOfWorkMaterialRepository;
         this.projectService = projectService;
         this.defineScopeOfWorkCommandToScopeOfWorkConverter = defineScopeOfWorkCommandToScopeOfWorkConverter;
     }
@@ -47,7 +52,7 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
 
     @Override
     @Transactional
-    public void handleDefineScopeOfWorkCommand(Long projectId, DefineScopeOfWorkCommand command)
+    public Set<ScopeOfWork> handleDefineScopeOfWorkCommand(Long projectId, DefineScopeOfWorkCommand command)
             throws ProjectNotFoundException, NoPermissionException {
         if (!hasQSRolePermission()) {
             throw new NoPermissionException();
@@ -55,84 +60,112 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
 
         Project project = projectService.get(projectId);
 
+        Set<ScopeOfWork> scopes = new HashSet<>();
         for (DefineScopeOfWorkCommand.ScopeCommand scopeCommand : command.getScopes()) {
             if (scopeCommand.getType() == DefineScopeOfWorkCommand.CommandType.CREATE) {
-                scopeCommand.setProjectId(project.getId());
-                createScopeOfWorkFromCommand(scopeCommand);
+                ScopeOfWork scope = createScopeOfWorkFromCommand(project, scopeCommand);
+
+                if (scope != null) {
+                    scopes.add(scope);
+                }
+
             } else if(scopeCommand.getType() == DefineScopeOfWorkCommand.CommandType.UPDATE) {
-                updateScopeOfWorkFromCommand(scopeCommand);
+                ScopeOfWork scope = updateScopeOfWorkFromCommand(scopeCommand);
+
+                if (scope != null) {
+                    scopes.add(scope);
+                }
             } else if (scopeCommand.getType() == DefineScopeOfWorkCommand.CommandType.DELETE) {
                 delete(scopeCommand.getId());
             }
         }
+
+        return scopes;
     }
 
     private boolean hasQSRolePermission() {
         return UserSessionUtil.getCurrentUserRoles().contains("qs");
     }
 
-    private void createScopeOfWorkFromCommand(DefineScopeOfWorkCommand.ScopeCommand command) {
+    private ScopeOfWork createScopeOfWorkFromCommand(Project project, DefineScopeOfWorkCommand.ScopeCommand command) {
         ScopeOfWork scope = defineScopeOfWorkCommandToScopeOfWorkConverter.convert(command);
 
-        if (scope != null) {
-            scopeOfWorkRepository.save(scope);
+        if (scope == null)
+            return null;
+
+        scope.setProject(project);
+        scopeOfWorkRepository.save(scope);
+        for (ScopeOfWorkTask task: scope.getTasks()) {
+            scopeOfWorkTaskRepository.save(task);
+            scopeOfWorkMaterialRepository.saveAll(task.getMaterials());
         }
+        return scope;
     }
 
-    private void updateScopeOfWorkFromCommand(DefineScopeOfWorkCommand.ScopeCommand command) {
+    private ScopeOfWork updateScopeOfWorkFromCommand(DefineScopeOfWorkCommand.ScopeCommand command) {
         Optional<ScopeOfWork> optionScope = scopeOfWorkRepository.findById(command.getId());
 
         if (optionScope.isEmpty()) {
-            return;
+            return null;
         }
 
         ScopeOfWork scope = optionScope.get();
         scope.setName(command.getName());
-
-        Map<Long, DefineScopeOfWorkCommand.TaskCommand> taskCommandDictionary
-                = convertCommandsToDictionary(command.getTasks());
-
-        for (ScopeOfWorkTask task : scope.getTasks()) {
-            DefineScopeOfWorkCommand.TaskCommand taskCommand = taskCommandDictionary.get(task.getId());
-
-            if (taskCommand != null) {
-                task.setName(taskCommand.getName());
-                task.setUnit(taskCommand.getUnit());
-                task.setQty(taskCommand.getQty());
-                updateMaterialsFromCommands(task, taskCommand.getMaterials());
-            }
-        }
-
         scopeOfWorkRepository.save(scope);
-    }
 
-    private <T extends DefineScopeOfWorkCommand.Command>Map<Long, T> convertCommandsToDictionary(
-            Set<T> commands) {
-        Map<Long, T> dictionary = new HashMap<>();
-
-        for (T command: commands) {
-            if (command.getId() != null) {
-                dictionary.put(command.getId(), command);
+        for (DefineScopeOfWorkCommand.TaskCommand taskCommand: command.getTasks()) {
+            if (taskCommand.getType() == DefineScopeOfWorkCommand.CommandType.CREATE) {
+                ScopeOfWorkTask task = defineScopeOfWorkCommandToScopeOfWorkConverter.convertTaskCommandToScopeOfWorkTask(taskCommand);
+                task.setScope(scope);
+                scopeOfWorkTaskRepository.save(task);
+                scopeOfWorkMaterialRepository.saveAll(task.getMaterials());
+            } else if (taskCommand.getType() == DefineScopeOfWorkCommand.CommandType.UPDATE) {
+                Optional<ScopeOfWorkTask> optional = scopeOfWorkTaskRepository.findById(taskCommand.getId());
+                if (optional.isPresent()) {
+                    ScopeOfWorkTask task = optional.get();
+                    task.setName(taskCommand.getName());
+                    task.setUnit(taskCommand.getUnit());
+                    task.setQty(taskCommand.getQty());
+                    scopeOfWorkTaskRepository.save(task);
+                    updateMaterialsFromCommands(task, taskCommand.getMaterials());
+                }
+            } else {
+                Optional<ScopeOfWorkTask> task = scopeOfWorkTaskRepository.findById(taskCommand.getId());
+                if (task.isPresent()) {
+                    scopeOfWorkTaskRepository.delete(task.get());
+                }
             }
         }
 
-        return dictionary;
+        return scopeOfWorkRepository.save(scope);
     }
 
-    private void updateMaterialsFromCommands(
-            ScopeOfWorkTask task,
-            Set<DefineScopeOfWorkCommand.MaterialCommand> commands) {
-        Map<Long, DefineScopeOfWorkCommand.MaterialCommand> materialCommandDictionary =
-                convertCommandsToDictionary(commands);
+    private void updateMaterialsFromCommands(ScopeOfWorkTask task,
+                                             Set<DefineScopeOfWorkCommand.MaterialCommand> commands) {
+        for (DefineScopeOfWorkCommand.MaterialCommand materialCommand: commands) {
+            if (materialCommand.getType() == DefineScopeOfWorkCommand.CommandType.CREATE) {
+                ScopeOfWorkMaterial material = defineScopeOfWorkCommandToScopeOfWorkConverter
+                        .convertMaterialCommandToScopeOfWorkMaterial(materialCommand);
+                material.setTask(task);
+                scopeOfWorkMaterialRepository.save(material);
+            } else if (materialCommand.getType() == DefineScopeOfWorkCommand.CommandType.UPDATE) {
+                Optional<ScopeOfWorkMaterial> optional = scopeOfWorkMaterialRepository
+                        .findById(materialCommand.getId());
+                if (optional.isPresent()) {
+                    ScopeOfWorkMaterial material = optional.get();
+                    material.setName(materialCommand.getName());
+                    material.setUnit(materialCommand.getUnit());
+                    material.setQty(material.getQty());
+                    material.setContingency(material.getContingency());
+                    scopeOfWorkMaterialRepository.save(material);
+                }
+            } else {
+                Optional<ScopeOfWorkMaterial> material = scopeOfWorkMaterialRepository
+                        .findById(materialCommand.getId());
 
-        for (ScopeOfWorkMaterial material : task.getMaterials()) {
-            DefineScopeOfWorkCommand.MaterialCommand command = materialCommandDictionary.get(material.getId());
-
-            if (command != null) {
-                material.setName(command.getName());
-                material.setUnit(command.getUnit());
-                material.setQty(command.getQty());
-                material.setContingency(command.getContingency());
+                if (material.isPresent()) {
+                    scopeOfWorkMaterialRepository.delete(material.get());
+                }
             }
         }
     }

@@ -34,7 +34,7 @@ public class ScopeOfWorkController {
     public ResponseEntity<?> getAll(@PathVariable Long projectId) {
         try {
             Set<ScopeOfWork> scopes = scopeOfWorkService.getAll(projectId);
-            return ResponseEntity.ok(scopes);
+            return ResponseEntity.ok().body(scopes);
         } catch (ProjectNotFoundException ex) {
             return ResponseEntity.notFound().build();
         } catch (Exception ex) {
@@ -45,11 +45,12 @@ public class ScopeOfWorkController {
         }
     }
 
+    @JsonView(ScopeOfWorkView.L3View.class)
     @RequestMapping(value = "/api/projects/{projectId}/scope-of-work/define", method = RequestMethod.POST)
     public ResponseEntity<?> define(@PathVariable Long projectId, @RequestBody DefineScopeOfWorkCommand command) {
         try {
-            scopeOfWorkService.handleDefineScopeOfWorkCommand(projectId, command);
-            return ResponseEntity.ok().build();
+            Set<ScopeOfWork> scopes = scopeOfWorkService.handleDefineScopeOfWorkCommand(projectId, command);
+            return ResponseEntity.ok().body(scopes);
         } catch (NoPermissionException ex) {
             log.error(ex.toString());
             Map<String, String> response = new HashMap<>();

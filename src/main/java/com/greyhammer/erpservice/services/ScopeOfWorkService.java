@@ -10,5 +10,5 @@ import java.util.Set;
 public interface ScopeOfWorkService {
     Set<ScopeOfWork> getAll(Long projectId) throws ProjectNotFoundException;
     void delete(Long id);
-    void handleDefineScopeOfWorkCommand(Long projectId, DefineScopeOfWorkCommand command) throws ProjectNotFoundException, NoPermissionException;
+    Set<ScopeOfWork> handleDefineScopeOfWorkCommand(Long projectId, DefineScopeOfWorkCommand command) throws ProjectNotFoundException, NoPermissionException;
 }

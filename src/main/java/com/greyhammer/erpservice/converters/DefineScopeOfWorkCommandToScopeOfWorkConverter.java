@@ -16,12 +16,13 @@ public class DefineScopeOfWorkCommandToScopeOfWorkConverter implements Converter
     public ScopeOfWork convert(DefineScopeOfWorkCommand.ScopeCommand source) {
         ScopeOfWork scope = new ScopeOfWork();
         scope.setName(source.getName());
-        scope.setProject(scope.getProject());
-
         Set<ScopeOfWorkTask> tasks = new HashSet<>();
 
+
         for (DefineScopeOfWorkCommand.TaskCommand taskCommand : source.getTasks()) {
-            tasks.add(convertTaskCommandToScopeOfWorkTask(taskCommand));
+            ScopeOfWorkTask task = convertTaskCommandToScopeOfWorkTask(taskCommand);
+            task.setScope(scope);
+            tasks.add(task);
         }
 
         scope.setTasks(tasks);
@@ -29,7 +30,7 @@ public class DefineScopeOfWorkCommandToScopeOfWorkConverter implements Converter
         return scope;
     }
 
-    private ScopeOfWorkTask convertTaskCommandToScopeOfWorkTask(DefineScopeOfWorkCommand.TaskCommand source) {
+    public ScopeOfWorkTask convertTaskCommandToScopeOfWorkTask(DefineScopeOfWorkCommand.TaskCommand source) {
         ScopeOfWorkTask task = new ScopeOfWorkTask();
         task.setName(source.getName());
         task.setUnit(source.getUnit());
@@ -38,14 +39,16 @@ public class DefineScopeOfWorkCommandToScopeOfWorkConverter implements Converter
         Set<ScopeOfWorkMaterial> materials = new HashSet<>();
 
         for (DefineScopeOfWorkCommand.MaterialCommand materialCommand : source.getMaterials()) {
-            materials.add(convertMaterialCommandToScopeOfWorkMaterial(materialCommand));
+            ScopeOfWorkMaterial material = convertMaterialCommandToScopeOfWorkMaterial(materialCommand);
+            material.setTask(task);
+            materials.add(material);
         }
 
         task.setMaterials(materials);
         return task;
     }
 
-    private ScopeOfWorkMaterial convertMaterialCommandToScopeOfWorkMaterial(
+    public ScopeOfWorkMaterial convertMaterialCommandToScopeOfWorkMaterial(
             DefineScopeOfWorkCommand.MaterialCommand source) {
         ScopeOfWorkMaterial material = new ScopeOfWorkMaterial();
         material.setName(source.getName());
