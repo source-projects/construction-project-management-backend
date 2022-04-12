@@ -54,9 +54,9 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
     @Transactional
     public Set<ScopeOfWork> handleDefineScopeOfWorkCommand(Long projectId, DefineScopeOfWorkCommand command)
             throws ProjectNotFoundException, NoPermissionException {
-        if (!hasQSRolePermission()) {
-            throw new NoPermissionException();
-        }
+//        if (!hasQSRolePermission()) {
+//            throw new NoPermissionException();
+//        }
 
         Project project = projectService.get(projectId);
 
@@ -126,6 +126,11 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
                     task.setName(taskCommand.getName());
                     task.setUnit(taskCommand.getUnit());
                     task.setQty(taskCommand.getQty());
+
+                    if (taskCommand.getSubconPricePerUnit() != null) {
+                        task.setSubconPricePerUnit(taskCommand.getSubconPricePerUnit());
+                    }
+
                     scopeOfWorkTaskRepository.save(task);
                     updateMaterialsFromCommands(task, taskCommand.getMaterials());
                 }
@@ -157,6 +162,15 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
                     material.setUnit(materialCommand.getUnit());
                     material.setQty(material.getQty());
                     material.setContingency(material.getContingency());
+
+                    if (materialCommand.getSubconPricePerUnit() != null) {
+                        material.setSubconPricePerUnit(materialCommand.getSubconPricePerUnit());
+                    }
+
+                    if (materialCommand.getPricePerUnit() != null) {
+                        material.setPricePerUnit(materialCommand.getPricePerUnit());
+                    }
+
                     scopeOfWorkMaterialRepository.save(material);
                 }
             } else {

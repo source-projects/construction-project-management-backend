@@ -25,13 +25,13 @@ public class ScopeOfWorkMaterial {
     private Double qty;
 
     @JsonView(ScopeOfWorkView.L2View.class)
-    private Double price;
-
-    @JsonView(ScopeOfWorkView.L2View.class)
     private Double contingency;
 
+    @JsonView(ScopeOfWorkView.L2View.class)
+    private Double pricePerUnit;
+
     @JsonView(ScopeOfWorkView.L3View.class)
-    private Double laborCost;
+    private Double subconPricePerUnit;
 
     @ManyToOne
     private ScopeOfWorkTask task;

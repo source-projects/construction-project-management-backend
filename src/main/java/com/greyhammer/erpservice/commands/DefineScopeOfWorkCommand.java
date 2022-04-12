@@ -38,6 +38,7 @@ public class DefineScopeOfWorkCommand {
         private String name;
         private String unit;
         private Double qty;
+        private Double subconPricePerUnit;
         private Set<MaterialCommand> materials;
     }
 
@@ -51,6 +52,8 @@ public class DefineScopeOfWorkCommand {
         private String unit;
         private Double qty;
         private Double contingency;
+        private Double pricePerUnit;
+        private Double subconPricePerUnit;
     }
 
     private Set<ScopeCommand> scopes;

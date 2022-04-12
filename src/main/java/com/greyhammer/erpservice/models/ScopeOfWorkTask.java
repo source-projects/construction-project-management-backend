@@ -26,7 +26,8 @@ public class ScopeOfWorkTask {
     private Double qty;
 
     @JsonView(ScopeOfWorkView.L3View.class)
-    private Double laborCost;
+    private Double subconPricePerUnit;
+
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
     @JsonView(ScopeOfWorkView.L1View.class)

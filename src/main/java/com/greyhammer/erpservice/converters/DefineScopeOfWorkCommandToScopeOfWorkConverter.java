@@ -36,6 +36,10 @@ public class DefineScopeOfWorkCommandToScopeOfWorkConverter implements Converter
         task.setUnit(source.getUnit());
         task.setQty(source.getQty());
 
+        if (source.getSubconPricePerUnit() != null) {
+            task.setSubconPricePerUnit(source.getSubconPricePerUnit());
+        }
+
         Set<ScopeOfWorkMaterial> materials = new HashSet<>();
 
         for (DefineScopeOfWorkCommand.MaterialCommand materialCommand : source.getMaterials()) {
@@ -55,6 +59,16 @@ public class DefineScopeOfWorkCommandToScopeOfWorkConverter implements Converter
         material.setUnit(source.getUnit());
         material.setQty(source.getQty());
         material.setContingency(source.getContingency());
+
+
+        if (source.getSubconPricePerUnit() != null) {
+            material.setSubconPricePerUnit(source.getSubconPricePerUnit());
+        }
+
+        if (source.getPricePerUnit() != null) {
+            material.setPricePerUnit(source.getPricePerUnit());
+        }
+
         return material;
     }
 }
