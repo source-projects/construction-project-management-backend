@@ -39,18 +39,18 @@ public class CompleteDefineScopeOfWorkEventListener implements ApplicationListen
             .build();
         taskService.dispatchTask(task);
 
-        builder = new TaskBuilder();
-
-        task = builder
+        TaskBuilder operationTaskBuilder = new TaskBuilder();
+        Task operationTask = operationTaskBuilder
             .project(project)
             .type(TaskType.SCHEDULE_PROJECT)
             .build();
-        taskService.dispatchTask(task);
+        taskService.dispatchTask(operationTask);
 
-        task = builder
+        TaskBuilder ceTaskBuilder = new TaskBuilder();
+        Task ceTask = ceTaskBuilder
             .project(project)
             .type(TaskType.COST_ESTIMATE_APPROVAL)
             .build();
-        taskService.dispatchTask(task);
+        taskService.dispatchTask(ceTask);
     }
 }
