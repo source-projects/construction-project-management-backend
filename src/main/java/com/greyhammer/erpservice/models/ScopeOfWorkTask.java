@@ -33,6 +33,9 @@ public class ScopeOfWorkTask {
     @JsonView(ScopeOfWorkView.L1View.class)
     private Set<ScopeOfWorkMaterial> materials;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
+    private Set<ProjectSchedule> schedules;
+
     @ManyToOne
     private ScopeOfWork scope;
 

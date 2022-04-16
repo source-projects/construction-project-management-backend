@@ -5,6 +5,7 @@ import com.greyhammer.erpservice.views.ScopeOfWorkView;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -36,4 +37,6 @@ public class ScopeOfWorkMaterial {
     @ManyToOne
     private ScopeOfWorkTask task;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "material")
+    private Set<ProjectScheduleBudget> budgets;
 }

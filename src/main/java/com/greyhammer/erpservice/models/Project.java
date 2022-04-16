@@ -62,4 +62,6 @@ public class Project {
     @JsonView({ProjectView.MinimalView.class})
     private ProjectStatus status;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    private Set<ProjectSchedule> schedules;
 }
