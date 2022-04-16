@@ -53,10 +53,7 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
     @Override
     @Transactional
     public Set<ScopeOfWork> handleDefineScopeOfWorkCommand(Long projectId, DefineScopeOfWorkCommand command)
-            throws ProjectNotFoundException, NoPermissionException {
-//        if (!hasQSRolePermission()) {
-//            throw new NoPermissionException();
-//        }
+            throws ProjectNotFoundException {
 
         Project project = projectService.get(projectId);
 
@@ -81,6 +78,21 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
         }
 
         return scopes;
+    }
+
+    @Override
+    public ScopeOfWorkTask getTaskById(Long id) {
+        Optional<ScopeOfWorkTask> task = scopeOfWorkTaskRepository.findById(id);
+
+        return task.orElse(null);
+    }
+
+    @Override
+    public ScopeOfWorkMaterial getMaterialById(Long id) {
+        Optional<ScopeOfWorkMaterial> material = scopeOfWorkMaterialRepository.findById(id);
+
+        return material.orElse(null);
+
     }
 
     private boolean hasQSRolePermission() {
@@ -136,9 +148,7 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
                 }
             } else {
                 Optional<ScopeOfWorkTask> task = scopeOfWorkTaskRepository.findById(taskCommand.getId());
-                if (task.isPresent()) {
-                    scopeOfWorkTaskRepository.delete(task.get());
-                }
+                task.ifPresent(scopeOfWorkTaskRepository::delete);
             }
         }
 
@@ -177,9 +187,7 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
                 Optional<ScopeOfWorkMaterial> material = scopeOfWorkMaterialRepository
                         .findById(materialCommand.getId());
 
-                if (material.isPresent()) {
-                    scopeOfWorkMaterialRepository.delete(material.get());
-                }
+                material.ifPresent(scopeOfWorkMaterialRepository::delete);
             }
         }
     }
