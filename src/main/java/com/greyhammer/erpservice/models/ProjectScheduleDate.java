@@ -9,7 +9,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-public class ProjectScheduleBudget {
+public class ProjectScheduleDate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,5 +21,5 @@ public class ProjectScheduleBudget {
     private ScopeOfWorkMaterial material;
 
     private Date date;
-    private Float budget;
+    private Float target;
 }

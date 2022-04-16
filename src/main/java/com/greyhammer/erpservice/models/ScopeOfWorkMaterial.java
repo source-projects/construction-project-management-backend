@@ -38,5 +38,5 @@ public class ScopeOfWorkMaterial {
     private ScopeOfWorkTask task;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "material")
-    private Set<ProjectScheduleBudget> budgets;
+    private Set<ProjectScheduleDate> budgets;
 }

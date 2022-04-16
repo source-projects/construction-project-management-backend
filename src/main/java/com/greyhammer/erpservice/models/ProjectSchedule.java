@@ -21,5 +21,5 @@ public class ProjectSchedule {
     private ScopeOfWorkTask task;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "schedule")
-    private Set<ProjectScheduleBudget> budgets;
+    private Set<ProjectScheduleDate> dates;
 }
