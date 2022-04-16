@@ -51,11 +51,6 @@ public class ScopeOfWorkController {
         try {
             Set<ScopeOfWork> scopes = scopeOfWorkService.handleDefineScopeOfWorkCommand(projectId, command);
             return ResponseEntity.ok().body(scopes);
-        } catch (NoPermissionException ex) {
-            log.error(ex.toString());
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "No right permission to define scope of work.");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         } catch (Exception ex) {
             log.error(ex.toString());
             Map<String, String> response = new HashMap<>();
