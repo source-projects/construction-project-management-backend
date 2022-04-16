@@ -63,5 +63,5 @@ public class Project {
     private ProjectStatus status;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
-    private Set<ProjectSchedule> schedules;
+    private Set<ProjectTargetSchedule> schedules;
 }

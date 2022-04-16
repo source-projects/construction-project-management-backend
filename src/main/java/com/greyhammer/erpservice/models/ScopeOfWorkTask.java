@@ -1,6 +1,7 @@
 package com.greyhammer.erpservice.models;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.greyhammer.erpservice.views.ProjectTargetScheduleView;
 import com.greyhammer.erpservice.views.ScopeOfWorkView;
 import lombok.*;
 
@@ -13,10 +14,10 @@ import java.util.Set;
 public class ScopeOfWorkTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(ScopeOfWorkView.L1View.class)
+    @JsonView({ScopeOfWorkView.L1View.class, ProjectTargetScheduleView.FullView.class})
     private Long id;
 
-    @JsonView(ScopeOfWorkView.L1View.class)
+    @JsonView({ScopeOfWorkView.L1View.class, ProjectTargetScheduleView.FullView.class})
     private String name;
 
     @JsonView(ScopeOfWorkView.L1View.class)
@@ -34,7 +35,7 @@ public class ScopeOfWorkTask {
     private Set<ScopeOfWorkMaterial> materials;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
-    private Set<ProjectSchedule> schedules;
+    private Set<ProjectTargetSchedule> schedules;
 
     @ManyToOne
     private ScopeOfWork scope;
