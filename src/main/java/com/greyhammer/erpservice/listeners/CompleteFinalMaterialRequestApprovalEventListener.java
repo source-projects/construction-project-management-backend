@@ -1,6 +1,6 @@
 package com.greyhammer.erpservice.listeners;
 
-import com.greyhammer.erpservice.events.CompleteMaterialRequestApprovalEvent;
+import com.greyhammer.erpservice.events.CompleteFinalMaterialRequestApprovalEvent;
 import com.greyhammer.erpservice.models.Task;
 import com.greyhammer.erpservice.models.TaskType;
 import com.greyhammer.erpservice.services.TaskService;
@@ -12,23 +12,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
-public class CompleteMaterialRequestApprovalEventListener implements ApplicationListener<CompleteMaterialRequestApprovalEvent> {
+public class CompleteFinalMaterialRequestApprovalEventListener
+        implements ApplicationListener<CompleteFinalMaterialRequestApprovalEvent> {
+
     private final TaskService taskService;
 
-    public CompleteMaterialRequestApprovalEventListener(TaskService taskService) {
+    public CompleteFinalMaterialRequestApprovalEventListener(TaskService taskService) {
         this.taskService = taskService;
     }
 
     @Override
     @Transactional
-    public void onApplicationEvent(CompleteMaterialRequestApprovalEvent event) {
-        log.debug("Handling complete material request approval event..");
+    public void onApplicationEvent(CompleteFinalMaterialRequestApprovalEvent event) {
+        log.debug("Handling complete final material request approval event..");
         TaskBuilder builder = new TaskBuilder();
 
         Task task = builder
                 .project(event.getRequest().getProject())
                 .materialRequest(event.getRequest())
-                .type(TaskType.MATERIAL_REQUEST_APPROVAL_CE)
+                .type(TaskType.FOR_PURCHASE_ORDER)
                 .build();
 
         taskService.dispatchTask(task);

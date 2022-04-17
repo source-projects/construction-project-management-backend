@@ -114,6 +114,48 @@ public class MaterialRequestController {
         }
     }
 
+    @RequestMapping(value = "/api/material-requests/{id}/final-approve", method = RequestMethod.PUT)
+    @JsonView(MaterialRequestView.FullView.class)
+    public ResponseEntity<Object> finalApprove(@PathVariable Long id) {
+        try {
+            MaterialRequest request = materialRequestService.finalApprove(id);
+            return ResponseEntity.ok(request);
+        } catch (NoPermissionException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "No permission to approve this request.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (MaterialRequestNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @RequestMapping(value = "/api/material-requests/{id}/final-reject", method = RequestMethod.PUT)
+    @JsonView(MaterialRequestView.FullView.class)
+    public ResponseEntity<Object> finalReject(@PathVariable Long id) {
+        try {
+            MaterialRequest request = materialRequestService.finalReject(id);
+            return ResponseEntity.ok(request);
+        } catch (NoPermissionException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "No permission to reject this request.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (MaterialRequestNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
     @JsonView(MaterialRequestView.FullView.class)
     @RequestMapping(value = "/api/material-requests", method = RequestMethod.POST)
     public ResponseEntity<?> create(@RequestBody CreateMaterialRequestCommand command) {

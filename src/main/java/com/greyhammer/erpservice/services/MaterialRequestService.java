@@ -14,6 +14,9 @@ public interface MaterialRequestService {
     MaterialRequest get(Long id) throws MaterialRequestNotFoundException;
     MaterialRequest approve(Long id) throws MaterialRequestNotFoundException, NoPermissionException;
     MaterialRequest reject(Long id) throws MaterialRequestNotFoundException, NoPermissionException;
+
+    MaterialRequest finalApprove(Long id) throws MaterialRequestNotFoundException, NoPermissionException;
+    MaterialRequest finalReject(Long id) throws MaterialRequestNotFoundException, NoPermissionException;
     Long getTotalMaterialRequestCount();
     MaterialRequest handleCreateMaterialRequestCommand(CreateMaterialRequestCommand source) throws ProjectNotFoundException;
 }

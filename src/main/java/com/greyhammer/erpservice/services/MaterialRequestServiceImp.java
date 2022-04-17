@@ -2,6 +2,7 @@ package com.greyhammer.erpservice.services;
 
 import com.greyhammer.erpservice.commands.CreateMaterialRequestCommand;
 import com.greyhammer.erpservice.converters.CreateMaterialRequestCommandToMaterialRequestConverter;
+import com.greyhammer.erpservice.events.CompleteFinalMaterialRequestApprovalEvent;
 import com.greyhammer.erpservice.events.CompleteMaterialRequestApprovalEvent;
 import com.greyhammer.erpservice.events.CreateMaterialRequestEvent;
 import com.greyhammer.erpservice.exceptions.MaterialRequestNotFoundException;
@@ -88,6 +89,42 @@ public class MaterialRequestServiceImp implements MaterialRequestService {
         Set<String> roles = UserSessionUtil.getCurrentUserRoles();
 
         if (!roles.contains("qs")) {
+            throw new NoPermissionException();
+        }
+
+        MaterialRequest request = get(id);
+
+        request.setStatus(MaterialRequestStatus.REJECTED);
+        materialRequestRepository.save(request);
+        return request;
+    }
+
+    @Override
+    public MaterialRequest finalApprove(Long id) throws MaterialRequestNotFoundException, NoPermissionException {
+        Set<String> roles = UserSessionUtil.getCurrentUserRoles();
+
+        if (!roles.contains("ce")) {
+            throw new NoPermissionException();
+        }
+
+        MaterialRequest request = get(id);
+
+        request.setFinalApprover(UserSessionUtil.getCurrentUsername());
+        request.setStatus(MaterialRequestStatus.FINAL_APPROVED);
+        materialRequestRepository.save(request);
+
+
+        CompleteFinalMaterialRequestApprovalEvent event = new CompleteFinalMaterialRequestApprovalEvent(this);
+        event.setRequest(request);
+        applicationEventPublisher.publishEvent(event);
+        return request;
+    }
+
+    @Override
+    public MaterialRequest finalReject(Long id) throws MaterialRequestNotFoundException, NoPermissionException {
+        Set<String> roles = UserSessionUtil.getCurrentUserRoles();
+
+        if (!roles.contains("ce")) {
             throw new NoPermissionException();
         }
 
