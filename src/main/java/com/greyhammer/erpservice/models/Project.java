@@ -1,6 +1,7 @@
 package com.greyhammer.erpservice.models;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.greyhammer.erpservice.views.MaterialRequestView;
 import com.greyhammer.erpservice.views.ProjectView;
 import lombok.*;
 
@@ -15,10 +16,10 @@ public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView({ProjectView.MinimalView.class})
+    @JsonView({ProjectView.MinimalView.class, MaterialRequestView.ListView.class})
     private Long id;
 
-    @JsonView({ProjectView.MinimalView.class})
+    @JsonView({ProjectView.MinimalView.class, MaterialRequestView.ListView.class})
     private String name;
 
     @JsonView({ProjectView.FullView.class})
@@ -29,7 +30,7 @@ public class Project {
     private String createdBy;
 
     @ManyToOne
-    @JsonView({ProjectView.MinimalView.class})
+    @JsonView({ProjectView.MinimalView.class, MaterialRequestView.ListView.class})
     private Customer customer;
 
     @JsonView({ProjectView.MinimalView.class})
@@ -49,6 +50,9 @@ public class Project {
     @JsonView({ProjectView.FullView.class})
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Set<ScopeOfWork> scopes;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    private Set<MaterialRequest> requests;
 
     @OneToMany(mappedBy = "project")
     @JsonView({ProjectView.FullView.class})

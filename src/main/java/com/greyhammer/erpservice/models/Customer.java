@@ -1,6 +1,7 @@
 package com.greyhammer.erpservice.models;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.greyhammer.erpservice.views.MaterialRequestView;
 import com.greyhammer.erpservice.views.ProjectView;
 import lombok.*;
 
@@ -13,10 +14,10 @@ import java.util.Set;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView({ProjectView.MinimalView.class})
+    @JsonView({ProjectView.MinimalView.class, MaterialRequestView.ListView.class})
     private Long id;
 
-    @JsonView({ProjectView.MinimalView.class})
+    @JsonView({ProjectView.MinimalView.class, MaterialRequestView.ListView.class})
     private String name;
     @JsonView({ProjectView.FullView.class})
     private String address1;

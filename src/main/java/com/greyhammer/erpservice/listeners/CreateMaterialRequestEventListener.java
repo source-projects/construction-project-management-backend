@@ -26,7 +26,8 @@ public class CreateMaterialRequestEventListener implements ApplicationListener<C
         TaskBuilder builder = new TaskBuilder();
 
         Task task = builder
-                .project(event.getProject())
+                .project(event.getRequest().getProject())
+                .materialRequest(event.getRequest())
                 .type(TaskType.MATERIAL_REQUEST_APPROVAL)
                 .build();
 

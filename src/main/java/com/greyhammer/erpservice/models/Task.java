@@ -31,6 +31,10 @@ public class Task {
     @JsonView(TaskView.ListView.class)
     private Project project;
 
+
+    @OneToOne
+    private MaterialRequest materialRequest;
+
     @Enumerated(value = EnumType.STRING)
     @JsonView(TaskView.ListView.class)
     private TaskType type;
