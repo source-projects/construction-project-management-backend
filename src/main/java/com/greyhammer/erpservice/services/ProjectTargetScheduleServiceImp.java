@@ -40,9 +40,13 @@ public class ProjectTargetScheduleServiceImp implements ProjectTargetScheduleSer
 
     @Override
     @Transactional
-    public Set<ProjectTargetSchedule> handleSetProjectTargetScheduleCommand(SetProjectTargetScheduleCommand source) {
+    public Set<ProjectTargetSchedule> handleSetProjectTargetScheduleCommand(
+            Long projectId, SetProjectTargetScheduleCommand source) throws ProjectNotFoundException {
+        projectService.get(projectId);
+
         Set<ProjectTargetSchedule> schedules = new HashSet<>();
         for (SetProjectTargetScheduleCommand.ScheduleCommand command : source.getCommands()) {
+            command.setProjectId(source.getProjectId());
 
             if (command.getType() == SetProjectTargetScheduleCommand.CommandType.CREATE) {
                 ProjectTargetSchedule schedule = handleCreateCommand(command);

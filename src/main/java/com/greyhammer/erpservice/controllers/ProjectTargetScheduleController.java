@@ -45,10 +45,19 @@ public class ProjectTargetScheduleController {
 
     @RequestMapping(value = "/api/projects/{id}/target-schedules", method = RequestMethod.POST)
     @JsonView(ProjectTargetScheduleView.FullView.class)
-    public ResponseEntity<?> setTargetProjectSchedule(@RequestBody SetProjectTargetScheduleCommand command) {
+    public ResponseEntity<?> setTargetProjectSchedule(
+            @PathVariable Long id,
+            @RequestBody SetProjectTargetScheduleCommand command) {
         try {
-            Set<ProjectTargetSchedule> schedules = projectScheduleService.handleSetProjectTargetScheduleCommand(command);
+            command.setProjectId(id);
+            Set<ProjectTargetSchedule> schedules = projectScheduleService.handleSetProjectTargetScheduleCommand(
+                    id, command);
             return ResponseEntity.ok().body(schedules);
+        } catch (ProjectNotFoundException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Project not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception ex) {
             log.error(ex.toString());
             Map<String, String> response = new HashMap<>();

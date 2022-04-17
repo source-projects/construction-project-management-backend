@@ -8,5 +8,7 @@ import java.util.Set;
 
 public interface ProjectTargetScheduleService {
     Set<ProjectTargetSchedule> getAllSchedulesByProjectId(Long projectId) throws ProjectNotFoundException;
-    Set<ProjectTargetSchedule> handleSetProjectTargetScheduleCommand(SetProjectTargetScheduleCommand source);
+    Set<ProjectTargetSchedule> handleSetProjectTargetScheduleCommand(
+            Long projectId,
+            SetProjectTargetScheduleCommand source) throws ProjectNotFoundException;
 }
