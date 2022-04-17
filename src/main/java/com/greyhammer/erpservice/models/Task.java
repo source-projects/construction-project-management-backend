@@ -33,6 +33,7 @@ public class Task {
 
 
     @OneToOne
+    @JsonView(TaskView.ListView.class)
     private MaterialRequest materialRequest;
 
     @Enumerated(value = EnumType.STRING)

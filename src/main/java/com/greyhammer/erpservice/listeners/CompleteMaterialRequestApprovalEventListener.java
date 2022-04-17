@@ -27,6 +27,7 @@ public class CompleteMaterialRequestApprovalEventListener implements Application
 
         Task task = builder
                 .project(event.getProject())
+                .materialRequest(event.getRequest())
                 .type(TaskType.MATERIAL_REQUEST_APPROVAL_CE)
                 .build();
 

@@ -3,6 +3,7 @@ package com.greyhammer.erpservice.controllers;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.greyhammer.erpservice.commands.CreateMaterialRequestCommand;
 import com.greyhammer.erpservice.exceptions.MaterialRequestNotFoundException;
+import com.greyhammer.erpservice.exceptions.NoPermissionException;
 import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
 import com.greyhammer.erpservice.models.MaterialRequest;
 import com.greyhammer.erpservice.models.Project;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +62,48 @@ public class MaterialRequestController {
         try {
             MaterialRequest request = materialRequestService.get(id);
             return ResponseEntity.ok(request);
+        } catch (MaterialRequestNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @RequestMapping(value = "/api/material-requests/{id}/approve", method = RequestMethod.PUT)
+    @JsonView(MaterialRequestView.FullView.class)
+    public ResponseEntity<Object> approve(@PathVariable Long id) {
+        try {
+            MaterialRequest request = materialRequestService.approve(id);
+            return ResponseEntity.ok(request);
+        } catch (NoPermissionException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "No permission to approve this request.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (MaterialRequestNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @RequestMapping(value = "/api/material-requests/{id}/reject", method = RequestMethod.PUT)
+    @JsonView(MaterialRequestView.FullView.class)
+    public ResponseEntity<Object> reject(@PathVariable Long id) {
+        try {
+            MaterialRequest request = materialRequestService.reject(id);
+            return ResponseEntity.ok(request);
+        } catch (NoPermissionException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "No permission to reject this request.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         } catch (MaterialRequestNotFoundException ex) {
             return ResponseEntity.notFound().build();
         } catch (Exception ex) {

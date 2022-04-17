@@ -2,6 +2,7 @@ package com.greyhammer.erpservice.models;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.greyhammer.erpservice.views.MaterialRequestView;
+import com.greyhammer.erpservice.views.TaskView;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,12 +15,18 @@ import java.util.Set;
 public class MaterialRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(MaterialRequestView.ListView.class)
+    @JsonView({MaterialRequestView.ListView.class, TaskView.ListView.class})
     private Long id;
     @JsonView(MaterialRequestView.ListView.class)
     private String requestBy;
     @JsonView(MaterialRequestView.ListView.class)
     private Date date;
+
+    @JsonView(MaterialRequestView.ListView.class)
+    private String approver;
+
+    @JsonView(MaterialRequestView.ListView.class)
+    private String finalApprover;
 
     @ManyToOne
     @JsonView(MaterialRequestView.ListView.class)
