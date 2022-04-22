@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Service
 public class CustomerServiceImp implements CustomerService {
-    CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
     public CustomerServiceImp(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
