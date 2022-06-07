@@ -44,6 +44,7 @@ public class Project {
     @JsonView({ProjectView.FullView.class})
     private Set<Attachment> attachments;
 
+    @JsonView({ProjectView.FullView.class})
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Set<Task> tasks;
 

@@ -37,11 +37,11 @@ public class Task {
     private MaterialRequest materialRequest;
 
     @Enumerated(value = EnumType.STRING)
-    @JsonView(TaskView.ListView.class)
+    @JsonView({TaskView.ListView.class, ProjectView.FullView.class})
     private TaskType type;
 
     @Enumerated(value = EnumType.STRING)
-    @JsonView(TaskView.ListView.class)
+    @JsonView({TaskView.ListView.class, ProjectView.FullView.class})
     private TaskStatus status;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
