@@ -55,6 +55,24 @@ public class Project {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private Set<MaterialRequest> requests;
 
+    @JsonView({ProjectView.FullView.class})
+    private String accountingApprover;
+
+    @JsonView({ProjectView.FullView.class})
+    private String accountingRejector;
+
+    @JsonView({ProjectView.FullView.class})
+    private String stakeholderApprover;
+
+    @JsonView({ProjectView.FullView.class})
+    private String stakeholderRejector;
+
+    @JsonView({ProjectView.FullView.class})
+    private String clientApprover;
+
+    @JsonView({ProjectView.FullView.class})
+    private String clientRejector;
+
     @OneToMany(mappedBy = "project")
     @JsonView({ProjectView.FullView.class})
     private Set<PurchaseOrder> pos;

@@ -72,6 +72,124 @@ public class ProjectController {
         }
     }
 
+
+    @PostMapping
+    @JsonView(ProjectView.FullView.class)
+    @RequestMapping(value = "/api/projects/{id}/accounting/{action}", method = RequestMethod.POST)
+    public ResponseEntity<Object> accounting(@PathVariable Long id, @PathVariable String action) {
+        try {
+            if(!UserSessionUtil.getCurrentUserRoles().contains("accounting")) {
+                throw new NoPermissionException();
+            }
+
+            if (action.equals("approve")) {
+                projectService.approveAsAccounting(id);
+                return ResponseEntity.ok().build();
+            } else if (action.equals("reject")) {
+                projectService.rejectAsAccounting(id);
+                return ResponseEntity.ok().build();
+            } else {
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "Invalid action.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+        } catch (NoPermissionException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "You do not have the permission to create a project.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (ProjectNotFoundException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Project not found.");
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping
+    @JsonView(ProjectView.FullView.class)
+    @RequestMapping(value = "/api/projects/{id}/stakeholder/{action}", method = RequestMethod.POST)
+    public ResponseEntity<Object> stakeholder(@PathVariable Long id, @PathVariable String action) {
+        try {
+            if(!UserSessionUtil.getCurrentUserRoles().contains("stakeholder")) {
+                throw new NoPermissionException();
+            }
+
+            if (action.equals("approve")) {
+                projectService.approveAsStakeholder(id);
+                return ResponseEntity.ok().build();
+            } else if (action.equals("reject")) {
+                projectService.rejectAsStakeholder(id);
+                return ResponseEntity.ok().build();
+            } else {
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "Invalid action.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+        } catch (NoPermissionException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "You do not have the permission to create a project.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (ProjectNotFoundException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Project not found.");
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
+    @PostMapping
+    @JsonView(ProjectView.FullView.class)
+    @RequestMapping(value = "/api/projects/{id}/client/{action}", method = RequestMethod.POST)
+    public ResponseEntity<Object> client(@PathVariable Long id, @PathVariable String action) {
+        try {
+            if(!UserSessionUtil.getCurrentUserRoles().contains("accounting")) {
+                throw new NoPermissionException();
+            }
+
+            if (action.equals("approve")) {
+                projectService.approveAsClient(id);
+                return ResponseEntity.ok().build();
+            } else if (action.equals("reject")) {
+                projectService.rejectAsClient(id);
+                return ResponseEntity.ok().build();
+            } else {
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "Invalid action.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+        } catch (NoPermissionException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "You do not have the permission to create a project.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (ProjectNotFoundException ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Project not found.");
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception ex) {
+            log.error(ex.toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Something went wrong. Try again later.");
+            return ResponseEntity.internalServerError().body(response);
+        }
+    }
+
     @PostMapping
     @JsonView(ProjectView.FullView.class)
     @RequestMapping(value = "/api/projects", method = RequestMethod.POST)

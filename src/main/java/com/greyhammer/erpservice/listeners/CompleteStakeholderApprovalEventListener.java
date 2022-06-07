@@ -27,16 +27,31 @@ public class CompleteStakeholderApprovalEventListener implements ApplicationList
     public void onApplicationEvent(CompleteStakeholderApprovalEvent event) {
         log.debug("Handling complete stakeholder approval event..");
         Project project = event.getProject();
-        project.setStatus(ProjectStatus.CLIENT_APPROVAL);
-        projectService.save(project);
 
-        TaskBuilder builder = new TaskBuilder();
+        if (project.getStakeholderApprover() != null) {
+            project.setStatus(ProjectStatus.CLIENT_APPROVAL);
+            projectService.save(project);
 
-        Task task = builder
-                .project(event.getProject())
-                .type(TaskType.CLIENT_APPROVAL)
-                .build();
+            TaskBuilder builder = new TaskBuilder();
 
-        taskService.dispatchTask(task);
+            Task task = builder
+                    .project(event.getProject())
+                    .type(TaskType.CLIENT_APPROVAL)
+                    .build();
+
+            taskService.dispatchTask(task);
+        } else {
+            project.setStatus(ProjectStatus.COST_ESTIMATE);
+            projectService.save(project);
+
+            TaskBuilder builder = new TaskBuilder();
+
+            Task task = builder
+                    .project(event.getProject())
+                    .type(TaskType.COST_ESTIMATE_APPROVAL)
+                    .build();
+
+            taskService.dispatchTask(task);
+        }
     }
 }

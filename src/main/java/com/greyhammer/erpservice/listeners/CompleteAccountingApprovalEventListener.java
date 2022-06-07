@@ -29,16 +29,31 @@ public class CompleteAccountingApprovalEventListener implements ApplicationListe
     public void onApplicationEvent(CompleteAccountingApprovalEvent event) {
         log.debug("Handling complete accounting approval event..");
         Project project = event.getProject();
-        project.setStatus(ProjectStatus.STATEKHOLDER_APPROVAL);
-        projectService.save(project);
 
-        TaskBuilder builder = new TaskBuilder();
+        if (project.getAccountingApprover() != null) {
+            project.setStatus(ProjectStatus.STATEKHOLDER_APPROVAL);
+            projectService.save(project);
 
-        Task task = builder
-                .project(event.getProject())
-                .type(TaskType.STATEKHOLDER_APPROVAL)
-                .build();
+            TaskBuilder builder = new TaskBuilder();
 
-        taskService.dispatchTask(task);
+            Task task = builder
+                    .project(event.getProject())
+                    .type(TaskType.STATEKHOLDER_APPROVAL)
+                    .build();
+
+            taskService.dispatchTask(task);
+        } else {
+            project.setStatus(ProjectStatus.COST_ESTIMATE);
+            projectService.save(project);
+
+            TaskBuilder builder = new TaskBuilder();
+
+            Task task = builder
+                    .project(event.getProject())
+                    .type(TaskType.COST_ESTIMATE_APPROVAL)
+                    .build();
+
+            taskService.dispatchTask(task);
+        }
     }
 }

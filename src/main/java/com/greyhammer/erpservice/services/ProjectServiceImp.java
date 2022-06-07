@@ -11,6 +11,7 @@ import com.greyhammer.erpservice.models.Customer;
 import com.greyhammer.erpservice.models.Project;
 import com.greyhammer.erpservice.models.ProjectStatus;
 import com.greyhammer.erpservice.repositories.ProjectRepository;
+import com.greyhammer.erpservice.utils.UserSessionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -67,6 +68,54 @@ public class ProjectServiceImp implements ProjectService {
     @Override
     public Project save(Project project) {
         return projectRepository.save(project);
+    }
+
+    @Override
+    public void approveAsAccounting(Long id) throws ProjectNotFoundException {
+        Project project = get(id);
+        project.setAccountingApprover(UserSessionUtil.getCurrentUsername());
+        project.setAccountingRejector(null);
+        projectRepository.save(project);
+    }
+
+    @Override
+    public void rejectAsAccounting(Long id) throws ProjectNotFoundException {
+        Project project = get(id);
+        project.setAccountingApprover(null);
+        project.setAccountingRejector(UserSessionUtil.getCurrentUsername());
+        projectRepository.save(project);
+    }
+
+    @Override
+    public void approveAsStakeholder(Long id) throws ProjectNotFoundException {
+        Project project = get(id);
+        project.setStakeholderApprover(UserSessionUtil.getCurrentUsername());
+        project.setStakeholderRejector(null);
+        projectRepository.save(project);
+    }
+
+    @Override
+    public void rejectAsStakeholder(Long id) throws ProjectNotFoundException {
+        Project project = get(id);
+        project.setStakeholderApprover(null);
+        project.setStakeholderRejector(UserSessionUtil.getCurrentUsername());
+        projectRepository.save(project);
+    }
+
+    @Override
+    public void approveAsClient(Long id) throws ProjectNotFoundException {
+        Project project = get(id);
+        project.setClientApprover(UserSessionUtil.getCurrentUsername());
+        project.setClientRejector(null);
+        projectRepository.save(project);
+    }
+
+    @Override
+    public void rejectAsClient(Long id) throws ProjectNotFoundException {
+        Project project = get(id);
+        project.setClientApprover(null);
+        project.setClientRejector(UserSessionUtil.getCurrentUsername());
+        projectRepository.save(project);
     }
 
     @Override
