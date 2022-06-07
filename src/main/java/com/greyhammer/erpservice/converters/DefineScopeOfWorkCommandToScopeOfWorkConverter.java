@@ -16,6 +16,8 @@ public class DefineScopeOfWorkCommandToScopeOfWorkConverter implements Converter
     public ScopeOfWork convert(DefineScopeOfWorkCommand.ScopeCommand source) {
         ScopeOfWork scope = new ScopeOfWork();
         scope.setName(source.getName());
+        scope.setSubconPrice(source.getSubconPrice());
+
         Set<ScopeOfWorkTask> tasks = new HashSet<>();
 
 

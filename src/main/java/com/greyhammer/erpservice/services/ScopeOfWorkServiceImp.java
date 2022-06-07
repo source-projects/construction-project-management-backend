@@ -123,6 +123,7 @@ public class ScopeOfWorkServiceImp implements ScopeOfWorkService {
 
         ScopeOfWork scope = optionScope.get();
         scope.setName(command.getName());
+        scope.setSubconPrice(command.getSubconPrice());
         scopeOfWorkRepository.save(scope);
 
         for (DefineScopeOfWorkCommand.TaskCommand taskCommand: command.getTasks()) {

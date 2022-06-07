@@ -20,6 +20,9 @@ public class ScopeOfWork {
     @JsonView({ScopeOfWorkView.L1View.class, MaterialRequestView.FullView.class})
     private String name;
 
+    @JsonView({ScopeOfWorkView.L1View.class, MaterialRequestView.FullView.class})
+    private Double subconPrice;
+
     @ManyToOne
     private Project project;
 

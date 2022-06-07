@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.HashSet;
@@ -42,18 +43,9 @@ class ProjectServiceImpTest {
 
     @Test
     void getAllProjects() {
-        Project project = new Project();
-        project.setId(1L);
-        Project project2 = new Project();
-        project.setId(2L);
-        Set<Project> projects = new HashSet<>();
-        projects.add(project);
-        projects.add(project2);
-
-        when(projectRepository.findAll()).thenReturn(projects);
-
-        assertEquals(projectService.getAll(PageRequest.of(0,5)).size(), 2);
-        verify(projectRepository, times(1)).findAll();
+        when(projectRepository.findAll(PageRequest.of(0, 5))).thenReturn(Page.empty());
+        assertEquals(projectService.getAll(PageRequest.of(0,5)).size(), 0);
+        verify(projectRepository, times(1)).findAll(PageRequest.of(0, 5));
     }
 
     @Test
