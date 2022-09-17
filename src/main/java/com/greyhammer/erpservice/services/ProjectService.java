@@ -18,7 +18,7 @@ public interface ProjectService {
     void approveAsAccounting(Long id) throws ProjectNotFoundException;
     void rejectAsAccounting(Long id) throws  ProjectNotFoundException;
 
-    void approveAsStakeholder(Long id) throws ProjectNotFoundException;
+    void approveAsStakeholder(Long id, Double profit) throws ProjectNotFoundException;
     void rejectAsStakeholder(Long id) throws  ProjectNotFoundException;
 
     void approveAsClient(Long id) throws ProjectNotFoundException;

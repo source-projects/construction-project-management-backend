@@ -87,10 +87,11 @@ public class ProjectServiceImp implements ProjectService {
     }
 
     @Override
-    public void approveAsStakeholder(Long id) throws ProjectNotFoundException {
+    public void approveAsStakeholder(Long id, Double profit) throws ProjectNotFoundException {
         Project project = get(id);
         project.setStakeholderApprover(UserSessionUtil.getCurrentUsername());
         project.setStakeholderRejector(null);
+        project.setProfit(profit);
         projectRepository.save(project);
     }
 
@@ -99,6 +100,7 @@ public class ProjectServiceImp implements ProjectService {
         Project project = get(id);
         project.setStakeholderApprover(null);
         project.setStakeholderRejector(UserSessionUtil.getCurrentUsername());
+        project.setProfit(null);
         projectRepository.save(project);
     }
 

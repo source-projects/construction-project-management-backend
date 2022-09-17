@@ -73,6 +73,9 @@ public class Project {
     @JsonView({ProjectView.FullView.class})
     private String clientRejector;
 
+    @JsonView({ProjectView.MinimalView.class})
+    private Double profit;
+
     @OneToMany(mappedBy = "project")
     @JsonView({ProjectView.FullView.class})
     private Set<PurchaseOrder> pos;

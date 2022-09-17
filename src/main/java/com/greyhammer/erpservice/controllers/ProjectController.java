@@ -2,6 +2,7 @@ package com.greyhammer.erpservice.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.greyhammer.erpservice.commands.CreateProjectCommand;
+import com.greyhammer.erpservice.commands.SetProfitCommand;
 import com.greyhammer.erpservice.exceptions.CustomerNotFoundException;
 import com.greyhammer.erpservice.exceptions.NoPermissionException;
 import com.greyhammer.erpservice.exceptions.ProjectNotFoundException;
@@ -115,14 +116,18 @@ public class ProjectController {
     @PostMapping
     @JsonView(ProjectView.FullView.class)
     @RequestMapping(value = "/api/projects/{id}/stakeholder/{action}", method = RequestMethod.POST)
-    public ResponseEntity<Object> stakeholder(@PathVariable Long id, @PathVariable String action) {
+    public ResponseEntity<Object> stakeholder(
+            @PathVariable Long id,
+            @PathVariable String action,
+            @RequestBody SetProfitCommand command
+            ) {
         try {
             if(!UserSessionUtil.getCurrentUserRoles().contains("stakeholder")) {
                 throw new NoPermissionException();
             }
 
             if (action.equals("approve")) {
-                projectService.approveAsStakeholder(id);
+                projectService.approveAsStakeholder(id, command.getProfit());
                 return ResponseEntity.ok().build();
             } else if (action.equals("reject")) {
                 projectService.rejectAsStakeholder(id);
